@@ -121,4 +121,3 @@
 
 Preferred communication style: Simple, everyday language.
 Do not show execution time and cost information (like "37s +0 -0 $0.09").
-Do not show commit-style messages like "just now - Improve user experience and project configuration for AI chat app".
