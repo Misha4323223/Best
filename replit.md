@@ -120,3 +120,4 @@
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Do not show execution time and cost information (like "37s +0 -0 $0.09").
