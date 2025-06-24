@@ -121,3 +121,4 @@
 
 Preferred communication style: Simple, everyday language.
 Do not show execution time and cost information (like "37s +0 -0 $0.09").
+Do not create reports about code changes or work duration.
