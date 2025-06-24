@@ -527,4 +527,4 @@ def test_provider(provider_name):
 # Функция для запуска сервера
 if __name__ == '__main__':
     print("Запуск стримингового сервера на порту 5001...")
-    app.run(host='0.0.0.0', port=5001, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=5004, debug=True, threaded=True)
