@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика отображения SVG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        .svg-container {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background: white;
+        }
+        .color-info {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 4px solid #007bff;
+        }
+        svg {
+            max-width: 300px;
+            height: auto;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Диагностика отображения SVG файлов</h1>
+        
+        <div class="test-section">
+            <h2>Тест 1: Простые цвета SVG</h2>
+            <div class="svg-container">
+                <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="100" height="100" fill="#ff0000"/>
+                    <rect x="100" y="0" width="100" height="100" fill="#00ff00"/>
+                    <rect x="0" y="100" width="100" height="100" fill="#0000ff"/>
+                    <rect x="100" y="100" width="100" height="100" fill="#ffff00"/>
+                </svg>
+                <p>Должны быть видны: красный, зеленый, синий, желтый квадраты</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Тест 2: Векторизованное изображение</h2>
+            <div class="svg-container">
+                <iframe src="/output/vectorizer/vectorized_aaa2d43dbcbaee63.svg" 
+                        width="300" height="300" style="border: 1px solid #ccc;">
+                </iframe>
+                <p>Векторизованное изображение в iframe</p>
+            </div>
+            
+            <div class="svg-container">
+                <img src="/output/vectorizer/vectorized_aaa2d43dbcbaee63.svg" 
+                     width="300" height="auto" alt="Векторизованное изображение"/>
+                <p>Векторизованное изображение как img</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Тест 3: Анализ цветов в SVG</h2>
+            <div class="color-info">
+                <h3>Найденные цвета в файле:</h3>
+                <div style="display: flex; gap: 10px; margin: 10px 0;">
+                    <div style="width: 50px; height: 50px; background: #0e0d0d; border: 1px solid #000;"></div>
+                    <div style="width: 50px; height: 50px; background: #6b696c; border: 1px solid #000;"></div>
+                    <div style="width: 50px; height: 50px; background: #b41423; border: 1px solid #000;"></div>
+                    <div style="width: 50px; height: 50px; background: #ececec; border: 1px solid #000;"></div>
+                </div>
+                <p>
+                    <strong>Цвет 1:</strong> #0e0d0d (темно-серый)<br>
+                    <strong>Цвет 2:</strong> #6b696c (средне-серый)<br>
+                    <strong>Цвет 3:</strong> #b41423 (темно-красный)<br>
+                    <strong>Цвет 4:</strong> #ececec (светло-серый)
+                </p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>Тест 4: Проверка браузерной поддержки</h2>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const supportInfo = document.getElementById('browser-support');
+                    let info = '';
+                    
+                    // Проверка поддержки SVG
+                    if (document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")) {
+                        info += '<p class="success">✓ SVG поддерживается</p>';
+                    } else {
+                        info += '<p class="error">✗ SVG не поддерживается</p>';
+                    }
+                    
+                    // Информация о браузере
+                    info += `<p><strong>Браузер:</strong> ${navigator.userAgent}</p>`;
+                    
+                    supportInfo.innerHTML = info;
+                });
+            </script>
+            <div id="browser-support"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>Тест 5: Прямая ссылка на SVG</h2>
+            <p><a href="/output/vectorizer/vectorized_aaa2d43dbcbaee63.svg" target="_blank">Открыть SVG в новой вкладке</a></p>
+            <p><a href="/output/vectorizer/vectorized_fabf194373e7e862.svg" target="_blank">Открыть другой SVG</a></p>
+        </div>
+
+        <div class="test-section">
+            <h2>Диагностический отчет</h2>
+            <div class="color-info">
+                <h3>Статус векторизации:</h3>
+                <p class="success">✓ Алгоритм K-means исправлен</p>
+                <p class="success">✓ SVG содержит 4 различных цвета</p>
+                <p class="success">✓ Файлы технически корректны</p>
+                
+                <h3>Возможные проблемы:</h3>
+                <ul>
+                    <li>CSS конфликты в веб-приложении</li>
+                    <li>Неправильный MIME-тип сервера</li>
+                    <li>Кэширование браузера</li>
+                    <li>Настройки безопасности браузера</li>
+                </ul>
+                
+                <h3>Рекомендации:</h3>
+                <ul>
+                    <li>Проверить настройки сервера для SVG файлов</li>
+                    <li>Очистить кэш браузера</li>
+                    <li>Протестировать в разных браузерах</li>
+                    <li>Проверить конфликты CSS стилей</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

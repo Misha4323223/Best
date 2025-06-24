@@ -1,0 +1,13 @@
+[run]
+command = "npm run dev"
+
+[workflows]
+"Start application" = "npm run dev"
+
+[deployment]
+run = ["npm", "run", "start"]
+
+[languages.javascript]
+pattern = "**/{*.js,*.jsx,*.ts,*.tsx}"
+[languages.javascript.languageServer]
+start = "typescript-language-server --stdio"

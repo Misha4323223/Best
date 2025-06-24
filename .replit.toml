@@ -1,0 +1,9 @@
+run = "npm run dev"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[env]
+NODE_ENV = "development"
+PORT = "5000"

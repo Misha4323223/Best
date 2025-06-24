@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Красный дракон - Векторизация</title>
+    <style>
+        body { 
+            margin: 0; 
+            padding: 20px; 
+            background: #1a1a2e; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        .container { 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+        }
+        svg { max-width: 600px; height: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+            <!-- Красный цвет - основной -->
+            <circle cx="400" cy="300" r="50" fill="#d63826"/>
+            <ellipse cx="500" cy="400" rx="80" ry="60" fill="#d63826"/>
+            
+            <!-- Оранжевый - огонь -->  
+            <circle cx="600" cy="350" r="30" fill="#f6864e"/>
+            <ellipse cx="650" cy="320" rx="25" ry="35" fill="#f6864e"/>
+            
+            <!-- Темно-красный - тени -->
+            <circle cx="350" cy="450" r="40" fill="#592929"/>
+            
+            <!-- Серый - детали -->
+            <rect x="450" y="500" width="60" height="40" fill="#747275"/>
+            
+            <!-- Светло-серый - блики -->
+            <circle cx="420" cy="280" r="15" fill="#e6e1de"/>
+            
+            <!-- Черный - контуры -->
+            <rect x="300" y="250" width="400" height="300" fill="none" stroke="#010101" stroke-width="3"/>
+        </svg>
+    </div>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOOMERANGS AI Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .logo-container {
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .logo-image {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 0;
+        }
+        
+        .chat-button {
+            display: inline-block;
+            background: white;
+            color: black;
+            padding: 20px 40px;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
+        }
+        
+        .chat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255, 255, 255, 0.5);
+            background: #f0f0f0;
+        }
+        
+        .ai-label {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .logo-image {
+                max-width: 300px;
+            }
+            
+            .chat-button {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .ai-label {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="/attached_assets/image.jpg" alt="BOOOMERANGS Logo" class="logo-image">
+    </div>
+    
+    <div class="ai-label">AI</div>
+    
+    <a href="/booomerangs-smart-chat.html" class="chat-button">
+        Войти
+    </a>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест встроенного SVG превью</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .chat-message {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .svg-preview {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 16px 0;
+            max-width: 400px;
+            max-height: 400px;
+        }
+
+        .svg-preview svg {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            border-radius: 4px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 8px;
+        }
+        
+        .test-button:hover {
+            background: #0056b3;
+        }
+        
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Тест встроенного SVG превью BOOOMERANGS AI</h1>
+    
+    <div class="chat-message">
+        <h2>Демонстрация векторизации</h2>
+        <p>Введите команду "нужен вектор" и URL изображения для тестирования:</p>
+        
+        <input type="text" class="test-input" id="testUrl" placeholder="URL изображения для векторизации" 
+               value="https://raw.githubusercontent.com/microsoft/fluentui-emoji/main/assets/Dragon/3D/dragon_3d.png">
+        
+        <button class="test-button" onclick="testVectorization()">🎯 Тест векторизации</button>
+        <button class="test-button" onclick="testWithLastImage()">📷 Тест с последним изображением</button>
+    </div>
+    
+    <div class="chat-message" id="result" style="display: none;">
+        <h3>Результат векторизации:</h3>
+        <div id="resultContent"></div>
+    </div>
+
+    <script>
+        async function testVectorization() {
+            const url = document.getElementById('testUrl').value;
+            const resultDiv = document.getElementById('result');
+            const contentDiv = document.getElementById('resultContent');
+            
+            if (!url) {
+                alert('Введите URL изображения');
+                return;
+            }
+            
+            resultDiv.style.display = 'block';
+            contentDiv.innerHTML = '<p>⏳ Векторизация в процессе...</p>';
+            
+            try {
+                // Отправляем запрос на векторизацию
+                const response = await fetch('http://localhost:5006/vectorize-url', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        imageUrl: url,
+                        quality: 'silkscreen',
+                        outputFormat: 'svg'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && (result.data?.svgContent || result.result?.svgContent)) {
+                    // Создаем превью как в чате
+                    const svgContent = result.data?.svgContent || result.result?.svgContent;
+                    const previewSvg = svgContent
+                        .replace(/width="[^"]*"/, 'width="400"')
+                        .replace(/height="[^"]*"/, 'height="400"')
+                        .replace(/viewBox="[^"]*"/, 'viewBox="0 0 400 400"');
+                    
+                    contentDiv.innerHTML = `
+                        <p>✅ Векторизация завершена!</p>
+                        <p><strong>Файл:</strong> ${result.data?.filename || result.result?.filename}</p>
+                        <p><strong>Качество:</strong> ${result.data?.quality || result.result?.quality}</p>
+                        
+                        <div class="svg-preview">
+                            ${previewSvg}
+                        </div>
+                        
+                        <details>
+                            <summary>Исходный SVG код</summary>
+                            <pre style="background: #f5f5f5; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 12px;">
+${svgContent}
+                            </pre>
+                        </details>
+                    `;
+                } else {
+                    contentDiv.innerHTML = `<p>❌ Ошибка: ${result.error || 'Неизвестная ошибка'}</p>`;
+                }
+            } catch (error) {
+                contentDiv.innerHTML = `<p>❌ Ошибка сети: ${error.message}</p>`;
+            }
+        }
+        
+        async function testWithLastImage() {
+            // Имитируем запрос "нужен вектор" через smart-router
+            const resultDiv = document.getElementById('result');
+            const contentDiv = document.getElementById('resultContent');
+            
+            resultDiv.style.display = 'block';
+            contentDiv.innerHTML = '<p>⏳ Поиск последнего изображения и векторизация...</p>';
+            
+            try {
+                const response = await fetch('/api/smart-router', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'нужен вектор',
+                        provider: 'smart'
+                    })
+                });
+                
+                const result = await response.json();
+                contentDiv.innerHTML = `<div style="white-space: pre-wrap;">${result.response || result.error}</div>`;
+                
+            } catch (error) {
+                contentDiv.innerHTML = `<p>❌ Ошибка: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

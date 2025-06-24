@@ -1,0 +1,67 @@
+import { MessageWithSender } from "@shared/schema";
+
+interface MessageBubbleProps {
+  message: MessageWithSender;
+  isCurrentUser: boolean;
+}
+
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isCurrentUser }) => {
+  const messageTime = new Date(message.timestamp).toLocaleTimeString([], { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
+  if (isCurrentUser) {
+    return (
+      <div className="flex items-end justify-end mb-4">
+        <div className="flex flex-col items-end space-y-1">
+          <div className="message-bubble sent p-3 text-white max-w-[80%] text-[15px]">
+            <p>{message.text}</p>
+          </div>
+          <div className="flex items-center text-xs text-gray-500 pr-2 mt-1">
+            <span>{messageTime}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 ml-1 text-blue-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              {message.status === "read" ? (
+                <path d="M18 6L9 17l-5-5" />
+              ) : (
+                <path d="M5 12l5 5L20 7" />
+              )}
+            </svg>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-end mb-4">
+      <div className="flex flex-col space-y-1 max-w-[80%]">
+        <div className="flex items-end">
+          <div className="w-8 h-8 rounded-full flex items-center justify-center mr-2 mb-1 flex-shrink-0 text-white bg-gradient-to-br from-purple-500 to-indigo-500 shadow-md text-sm font-medium">
+            {message.sender.initials}
+          </div>
+          <div className="message-bubble received p-3 text-[15px] text-gray-800">
+            <p>{message.text}</p>
+          </div>
+        </div>
+        <div className="flex items-center">
+          <span className="text-xs text-gray-500 ml-10">{messageTime}</span>
+          {message.sender.username === "BOOOMERANGS AI" && (
+            <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-600 font-medium">
+              AI
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default MessageBubble;

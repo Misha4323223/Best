@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Логи системы AI Chat</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .controls {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-warning { background: #f39c12; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn:hover { opacity: 0.8; }
+        .logs-container {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .log-entry {
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #ddd;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        .log-info { border-left-color: #3498db; background: #ebf3fd; }
+        .log-debug { border-left-color: #95a5a6; background: #f8f9fa; }
+        .log-warn { border-left-color: #f39c12; background: #fef9e7; }
+        .log-error { border-left-color: #e74c3c; background: #fdebea; }
+        .log-meta {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .log-details {
+            background: rgba(0,0,0,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            white-space: pre-wrap;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Система мониторинга AI Chat</h1>
+            <p>Полное логирование процесса генерации и редактирования изображений</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="loadRecentLogs()">Последние логи</button>
+            <button class="btn btn-success" onclick="loadImageLogs()">Логи изображений</button>
+            <button class="btn btn-warning" onclick="loadStats()">Статистика</button>
+            <button class="btn btn-danger" onclick="clearLogs()">Очистить логи</button>
+            <input type="number" id="sessionInput" placeholder="ID сессии" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <button class="btn btn-primary" onclick="loadSessionLogs()">Логи сессии</button>
+        </div>
+
+        <div id="stats" class="stats" style="display: none;"></div>
+        
+        <div class="logs-container" id="logsContainer">
+            <p style="text-align: center; color: #666;">Выберите тип логов для просмотра</p>
+        </div>
+    </div>
+
+    <script>
+        async function loadRecentLogs() {
+            try {
+                const response = await fetch('/api/logs/recent?limit=100');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayLogs(data.logs, 'Последние 100 логов');
+                    hideStats();
+                } else {
+                    alert('Ошибка загрузки логов');
+                }
+            } catch (error) {
+                alert('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        async function loadImageLogs() {
+            try {
+                const response = await fetch('/api/logs/category/IMAGE_GENERATION');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayLogs(data.logs, 'Логи генерации изображений');
+                    hideStats();
+                } else {
+                    alert('Ошибка загрузки логов изображений');
+                }
+            } catch (error) {
+                alert('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        async function loadSessionLogs() {
+            const sessionId = document.getElementById('sessionInput').value;
+            if (!sessionId) {
+                alert('Введите ID сессии');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/logs/session/${sessionId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayLogs(data.logs, `Логи сессии #${sessionId}`);
+                    hideStats();
+                } else {
+                    alert('Ошибка загрузки логов сессии');
+                }
+            } catch (error) {
+                alert('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/logs/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayStats(data.stats);
+                    hideLogs();
+                } else {
+                    alert('Ошибка загрузки статистики');
+                }
+            } catch (error) {
+                alert('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        async function clearLogs() {
+            if (!confirm('Вы уверены, что хотите очистить все логи?')) return;
+
+            try {
+                const response = await fetch('/api/logs', { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Логи очищены');
+                    document.getElementById('logsContainer').innerHTML = '<p style="text-align: center; color: #666;">Логи очищены</p>';
+                } else {
+                    alert('Ошибка очистки логов');
+                }
+            } catch (error) {
+                alert('Ошибка соединения: ' + error.message);
+            }
+        }
+
+        function displayLogs(logs, title) {
+            const container = document.getElementById('logsContainer');
+            
+            if (!logs.length) {
+                container.innerHTML = `<p style="text-align: center; color: #666;">${title}: логи не найдены</p>`;
+                return;
+            }
+
+            let html = `<h3>${title} (${logs.length} записей)</h3>`;
+            
+            logs.reverse().forEach(log => {
+                const levelClass = `log-${log.level.toLowerCase()}`;
+                const details = typeof log.details === 'object' ? JSON.stringify(log.details, null, 2) : log.details;
+                
+                html += `
+                    <div class="log-entry ${levelClass}">
+                        <div class="log-meta">
+                            ${new Date(log.timestamp).toLocaleString('ru-RU')} | 
+                            ${log.level} | 
+                            ${log.category} | 
+                            ${log.action}
+                            ${log.sessionId ? ` | Сессия: ${log.sessionId}` : ''}
+                        </div>
+                        <div class="log-details">${details}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function displayStats(stats) {
+            const container = document.getElementById('stats');
+            
+            let html = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.total}</div>
+                    <div class="stat-label">Всего логов</div>
+                </div>
+            `;
+
+            Object.entries(stats.byLevel).forEach(([level, count]) => {
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-number">${count}</div>
+                        <div class="stat-label">${level}</div>
+                    </div>
+                `;
+            });
+
+            Object.entries(stats.byCategory).forEach(([category, count]) => {
+                html += `
+                    <div class="stat-card">
+                        <div class="stat-number">${count}</div>
+                        <div class="stat-label">${category}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            container.style.display = 'grid';
+        }
+
+        function hideStats() {
+            document.getElementById('stats').style.display = 'none';
+        }
+
+        function hideLogs() {
+            document.getElementById('logsContainer').innerHTML = '';
+        }
+
+        // Автообновление каждые 10 секунд для последних логов
+        let autoRefresh = null;
+
+        function startAutoRefresh() {
+            autoRefresh = setInterval(loadRecentLogs, 10000);
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefresh) {
+                clearInterval(autoRefresh);
+                autoRefresh = null;
+            }
+        }
+
+        // Загружаем последние логи при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadRecentLogs);
+    </script>
+</body>
+</html>

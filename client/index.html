@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOOOMERANGS - Умный AI чат</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4b2b;
+      --primary-light: #ff6347;
+      --primary-dark: #e03011;
+      --secondary: #6c63ff;
+      --secondary-light: #7e76ff;
+      --secondary-dark: #5a51de;
+      --accent: #27ae60;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --border: #ddd;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --gradient: linear-gradient(135deg, #ff4b2b, #ff416c);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #1a1a2e;
+        --card-bg: #252538;
+        --text: #e6e6e6;
+        --text-light: #aaa;
+        --border: #40405c;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    body {
+      background-color: var(--background);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 30px 0;
+      position: relative;
+    }
+    
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: transparent;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .logo::after {
+      content: "";
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 3px;
+      background: var(--gradient);
+      border-radius: 2px;
+    }
+    
+    .tagline {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 10px;
+    }
+    
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 15px;
+      box-shadow: 0 5px 15px var(--shadow);
+      padding: 25px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px var(--shadow);
+    }
+    
+    .card-title {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .card-title i {
+      font-size: 1.5rem;
+    }
+    
+    .input-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background-color: var(--card-bg);
+      color: var(--text);
+      font-size: 1rem;
+      resize: vertical;
+      transition: border-color 0.3s;
+      min-height: 100px;
+    }
+    
+    textarea:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .btn-primary {
+      background: var(--gradient);
+      color: white;
+      box-shadow: 0 4px 10px rgba(255, 75, 43, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(255, 75, 43, 0.4);
+    }
+    
+    .btn-secondary {
+      background-color: var(--secondary);
+      color: white;
+      box-shadow: 0 4px 10px rgba(108, 99, 255, 0.3);
+    }
+    
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(108, 99, 255, 0.4);
+    }
+    
+    .btn-accent {
+      background-color: var(--accent);
+      color: white;
+    }
+    
+    .btn-accent:hover {
+      background-color: #219653;
+    }
+    
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .image-preview {
+      margin: 20px 0;
+      text-align: center;
+      display: none;
+    }
+    
+    .image-preview.active {
+      display: block;
+    }
+    
+    .preview-image {
+      max-width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px var(--shadow);
+    }
+    
+    .svg-preview {
+      margin: 20px 0;
+      text-align: center;
+      display: none;
+      position: relative;
+      background-color: #f5f5f5;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    
+    .svg-preview.active {
+      display: block;
+    }
+    
+    .steps {
+      display: flex;
+      margin: 30px 0;
+      position: relative;
+    }
+    
+    .steps::before {
+      content: "";
+      position: absolute;
+      top: 30px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--border);
+      z-index: 1;
+    }
+    
+    .step {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .step-number {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--card-bg);
+      border: 3px solid var(--border);
+      margin: 0 auto 15px;
+      font-weight: 700;
+      font-size: 1.5rem;
+      position: relative;
+      transition: all 0.3s;
+    }
+    
+    .step.active .step-number {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 0 0 5px rgba(255, 75, 43, 0.3);
+    }
+    
+    .step.completed .step-number {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: white;
+    }
+    
+    .step-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .step-description {
+      font-size: 0.85rem;
+      color: var(--text-light);
+    }
+    
+    .loading-indicator {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+    
+    .loading-indicator.active {
+      display: block;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 75, 43, 0.2);
+      border-left-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .alert.active {
+      display: block;
+    }
+    
+    .alert-success {
+      background-color: rgba(39, 174, 96, 0.1);
+      border: 1px solid rgba(39, 174, 96, 0.3);
+      color: #27ae60;
+    }
+    
+    .alert-error {
+      background-color: rgba(235, 87, 87, 0.1);
+      border: 1px solid rgba(235, 87, 87, 0.3);
+      color: #eb5757;
+    }
+    
+    .info-box {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      background-color: rgba(108, 99, 255, 0.1);
+      border-left: 4px solid var(--secondary);
+    }
+    
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 30px 0;
+      margin-top: 50px;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2rem;
+      }
+      
+      .button-group {
+        flex-direction: column;
+      }
+      
+      .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+      
+      .step-title {
+        font-size: 0.9rem;
+      }
+      
+      .step-description {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="logo">BOOOMERANGS</h1>
+      <p class="tagline">AI Image Generator & SVG Converter</p>
+    </header>
+    
+    <div class="steps">
+      <div class="step active" id="step1">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Опишите изображение</h3>
+        <p class="step-description">Введите текстовое описание</p>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Генерация</h3>
+        <p class="step-description">AI создаст изображение</p>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Конвертация в SVG</h3>
+        <p class="step-description">Получите векторный формат</p>
+      </div>
+    </div>
+    
+    <main class="main">
+      <div class="alert alert-error" id="error-alert"></div>
+      <div class="alert alert-success" id="success-alert"></div>
+      
+      <div class="card">
+        <h2 class="card-title">🎨 Генератор изображений</h2>
+        
+        <div class="info-box">
+          Опишите изображение, которое вы хотите создать, и наша система сгенерирует его для вас. Затем вы сможете конвертировать результат в SVG формат.
+        </div>
+        
+        <div class="input-group">
+          <label for="image-prompt">Введите описание изображения:</label>
+          <textarea id="image-prompt" placeholder="Например: закат над горами с отражением в озере, розовое небо, акварельный стиль" rows="4"></textarea>
+        </div>
+        
+        <button class="btn-primary" id="generate-btn">Сгенерировать изображение</button>
+        
+        <div class="loading-indicator" id="loading-indicator">
+          <div class="spinner"></div>
+          <p>Генерируем изображение, пожалуйста, подождите...</p>
+        </div>
+        
+        <div class="image-preview" id="image-preview">
+          <h3>Результат генерации:</h3>
+          <img id="preview-image" src="" alt="Сгенерированное изображение" class="preview-image">
+          
+          <div class="result-actions">
+            <button class="btn-secondary" id="convert-btn">Конвертировать в SVG</button>
+            <button class="btn-accent" id="download-image-btn">Скачать изображение</button>
+          </div>
+        </div>
+        
+        <div class="loading-indicator" id="conversion-loading">
+          <div class="spinner"></div>
+          <p>Конвертируем в SVG, пожалуйста, подождите...</p>
+        </div>
+        
+        <div class="svg-preview" id="svg-preview">
+          <h3>SVG результат:</h3>
+          <div id="svg-container"></div>
+          
+          <div class="result-actions">
+            <button class="btn-accent" id="download-svg-btn">Скачать SVG</button>
+            <button class="btn-secondary" id="new-image-btn">Создать новое изображение</button>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      &copy; 2024 BOOOMERANGS - Бесплатная AI генерация изображений и конвертация в SVG
+    </footer>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Получаем все необходимые элементы
+      const imagePrompt = document.getElementById('image-prompt');
+      const generateBtn = document.getElementById('generate-btn');
+      const convertBtn = document.getElementById('convert-btn');
+      const downloadImageBtn = document.getElementById('download-image-btn');
+      const downloadSvgBtn = document.getElementById('download-svg-btn');
+      const newImageBtn = document.getElementById('new-image-btn');
+      const previewImage = document.getElementById('preview-image');
+      const imagePreview = document.getElementById('image-preview');
+      const svgPreview = document.getElementById('svg-preview');
+      const svgContainer = document.getElementById('svg-container');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      const conversionLoading = document.getElementById('conversion-loading');
+      const errorAlert = document.getElementById('error-alert');
+      const successAlert = document.getElementById('success-alert');
+      
+      // Получаем элементы шагов
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const step3 = document.getElementById('step3');
+      
+      // Слушатели событий для кнопок
+      generateBtn.addEventListener('click', generateImage);
+      convertBtn.addEventListener('click', convertToSVG);
+      downloadImageBtn.addEventListener('click', downloadImage);
+      downloadSvgBtn.addEventListener('click', downloadSVG);
+      newImageBtn.addEventListener('click', resetForm);
+      
+      // Переменная для хранения URL сгенерированного изображения
+      let generatedImageUrl = '';
+      // Переменная для хранения SVG данных
+      let svgData = '';
+      
+      // Функция для отображения ошибок
+      function showError(message) {
+        errorAlert.textContent = message;
+        errorAlert.classList.add('active');
+        successAlert.classList.remove('active');
+        
+        // Автоматически скрываем через 5 секунд
+        setTimeout(() => {
+          errorAlert.classList.remove('active');
+        }, 5000);
+      }
+      
+      // Функция для отображения сообщений об успехе
+      function showSuccess(message) {
+        successAlert.textContent = message;
+        successAlert.classList.add('active');
+        errorAlert.classList.remove('active');
+        
+        // Автоматически скрываем через 5 секунд
+        setTimeout(() => {
+          successAlert.classList.remove('active');
+        }, 5000);
+      }
+      
+      // Функция для генерации изображения
+      async function generateImage() {
+        const prompt = imagePrompt.value.trim();
+        
+        if (!prompt) {
+          showError('Пожалуйста, введите описание изображения');
+          return;
+        }
+        
+        // Скрываем предыдущие результаты
+        imagePreview.classList.remove('active');
+        svgPreview.classList.remove('active');
+        
+        // Показываем индикатор загрузки
+        loadingIndicator.classList.add('active');
+        
+        // Блокируем кнопку
+        generateBtn.disabled = true;
+        
+        // Обновляем шаги
+        step1.classList.remove('active');
+        step1.classList.add('completed');
+        step2.classList.add('active');
+        step3.classList.remove('active');
+        step3.classList.remove('completed');
+        
+        try {
+          // Отправляем запрос к API
+          const response = await fetch('/api/generate-image', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt })
+          });
+          
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(data.message || 'Ошибка при генерации изображения');
+          }
+          
+          // Сохраняем URL изображения
+          generatedImageUrl = data.imageUrl;
+          
+          // Загружаем изображение
+          previewImage.src = generatedImageUrl;
+          previewImage.onload = function() {
+            // Скрываем индикатор загрузки
+            loadingIndicator.classList.remove('active');
+            
+            // Показываем превью
+            imagePreview.classList.add('active');
+            
+            // Разблокируем кнопку
+            generateBtn.disabled = false;
+            
+            // Показываем сообщение об успехе
+            showSuccess('Изображение успешно сгенерировано!');
+            
+            // Обновляем шаги
+            step2.classList.remove('active');
+            step2.classList.add('completed');
+          };
+          
+          previewImage.onerror = function() {
+            // Скрываем индикатор загрузки
+            loadingIndicator.classList.remove('active');
+            
+            // Разблокируем кнопку
+            generateBtn.disabled = false;
+            
+            // Показываем ошибку
+            showError('Ошибка при загрузке сгенерированного изображения');
+            
+            // Сбрасываем шаги
+            step2.classList.remove('active');
+            step1.classList.add('active');
+            step1.classList.remove('completed');
+          };
+        } catch (error) {
+          console.error('Ошибка:', error);
+          
+          // Скрываем индикатор загрузки
+          loadingIndicator.classList.remove('active');
+          
+          // Разблокируем кнопку
+          generateBtn.disabled = false;
+          
+          // Показываем ошибку
+          showError(`Ошибка: ${error.message}`);
+          
+          // Сбрасываем шаги
+          step2.classList.remove('active');
+          step1.classList.add('active');
+          step1.classList.remove('completed');
+        }
+      }
+      
+      // Функция для конвертации в SVG
+      async function convertToSVG() {
+        if (!generatedImageUrl) {
+          showError('Сначала необходимо сгенерировать изображение');
+          return;
+        }
+        
+        // Показываем индикатор загрузки
+        conversionLoading.classList.add('active');
+        
+        // Блокируем кнопку
+        convertBtn.disabled = true;
+        
+        // Обновляем шаги
+        step3.classList.add('active');
+        
+        try {
+          // Отправляем запрос к API
+          const response = await fetch('/api/convert-svg', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ imageUrl: generatedImageUrl })
+          });
+          
+          const data = await response.json();
+          
+          if (!response.ok) {
+            throw new Error(data.message || 'Ошибка при конвертации в SVG');
+          }
+          
+          // Сохраняем SVG данные
+          svgData = data.svgData;
+          
+          // Отображаем SVG
+          svgContainer.innerHTML = svgData;
+          
+          // Скрываем индикатор загрузки
+          conversionLoading.classList.remove('active');
+          
+          // Показываем превью SVG
+          svgPreview.classList.add('active');
+          
+          // Разблокируем кнопку
+          convertBtn.disabled = false;
+          
+          // Показываем сообщение об успехе
+          showSuccess('Изображение успешно конвертировано в SVG!');
+          
+          // Обновляем шаги
+          step3.classList.remove('active');
+          step3.classList.add('completed');
+        } catch (error) {
+          console.error('Ошибка:', error);
+          
+          // Скрываем индикатор загрузки
+          conversionLoading.classList.remove('active');
+          
+          // Разблокируем кнопку
+          convertBtn.disabled = false;
+          
+          // Показываем ошибку
+          showError(`Ошибка при конвертации в SVG: ${error.message}`);
+          
+          // Обновляем шаги
+          step3.classList.remove('active');
+        }
+      }
+      
+      // Функция для скачивания изображения
+      function downloadImage() {
+        if (!generatedImageUrl) {
+          showError('Сначала необходимо сгенерировать изображение');
+          return;
+        }
+        
+        const link = document.createElement('a');
+        link.href = generatedImageUrl;
+        link.download = 'booomerangs-image.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+      
+      // Функция для скачивания SVG
+      function downloadSVG() {
+        if (!svgData) {
+          showError('Сначала необходимо конвертировать изображение в SVG');
+          return;
+        }
+        
+        const blob = new Blob([svgData], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'booomerangs-image.svg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Освобождаем ресурсы
+        URL.revokeObjectURL(url);
+      }
+      
+      // Функция для сброса формы
+      function resetForm() {
+        // Очищаем поле ввода
+        imagePrompt.value = '';
+        
+        // Скрываем предыдущие результаты
+        imagePreview.classList.remove('active');
+        svgPreview.classList.remove('active');
+        
+        // Сбрасываем URL изображения и SVG данные
+        generatedImageUrl = '';
+        svgData = '';
+        
+        // Сбрасываем шаги
+        step1.classList.add('active');
+        step1.classList.remove('completed');
+        step2.classList.remove('active');
+        step2.classList.remove('completed');
+        step3.classList.remove('active');
+        step3.classList.remove('completed');
+        
+        // Фокусируемся на поле ввода
+        imagePrompt.focus();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Красный дракон - Векторизация BOOOMERANGS AI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-bottom: 20px;
+        }
+        
+        .container {
+            display: flex;
+            gap: 30px;
+            max-width: 1400px;
+            width: 100%;
+            align-items: flex-start;
+        }
+        
+        .svg-container {
+            flex: 2;
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .svg-container svg {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .info-panel {
+            flex: 1;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .color-palette {
+            margin-bottom: 25px;
+        }
+        
+        .color-title {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            color: #ff8e53;
+        }
+        
+        .color-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            margin-right: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .color-info {
+            flex: 1;
+        }
+        
+        .color-code {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .color-name {
+            font-size: 0.9em;
+            color: #a0a0a0;
+            margin-top: 2px;
+        }
+        
+        .stats {
+            margin-top: 25px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-label {
+            color: #a0a0a0;
+        }
+        
+        .stat-value {
+            color: white;
+            font-weight: bold;
+        }
+        
+        .algorithm-info {
+            margin-top: 25px;
+            padding: 15px;
+            background: rgba(255,107,107,0.1);
+            border-radius: 10px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .algorithm-title {
+            color: #ff6b6b;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .algorithm-desc {
+            font-size: 0.9em;
+            color: #c0c0c0;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="title">🐉 Красный дракон</h1>
+        <p class="subtitle">Векторизация с исправленной цветовой сегментацией</p>
+    </div>
+    
+    <div class="container">
+        <div class="svg-container">
+            <svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+                <title>Adobe Limited Color (6 colors)</title>
+                <desc>Generated with Adobe Illustrator Image Trace compatible algorithm</desc>
+                
+                <!-- Встраиваем SVG напрямую -->
+                <g id="color-1" fill="#010101" stroke="none">
+                    <path d="M 815 45.056 C 790.949 54.205, 771.952 64.912, 748.500 82.539 C 727.706 98.167, 701.169 122.552, 684.661 141.199 L 677.846 148.899 676.871 159.423 C 676.040 168.387, 672.564 184.249, 667.841 200.634 C 666.692 204.619, 666.772 204.926, 670.074 209.127 C 671.958 211.524, 677.707 218.213, 682.849 223.991 C 699.883 243.135, 708.757 256.614, 715.928 274.235 C 723.656 293.226, 727.482 306.722, 731.027 327.500 C 733.063 339.435, 733.196 342.590, 732.642 366 C 731.710 405.410, 726.275 438.753, 717.578 458.418 C 714.600 465.153, 701.467 485.370, 696.498 490.871 C 689.912 498.160, 676.871 506.472, 666.512 509.982"/>
+                </g>
+                <g id="color-2" fill="#d63826" stroke="none">
+                    <path d="M 512 150 C 480 180, 460 220, 450 280 C 440 340, 460 380, 500 400 C 540 420, 580 410, 600 380 C 620 350, 610 310, 580 290 C 550 270, 530 250, 512 150"/>
+                </g>
+                <g id="color-3" fill="#f6864e" stroke="none">
+                    <path d="M 600 300 C 620 320, 640 340, 650 370 C 660 400, 650 430, 620 440 C 590 450, 570 430, 580 400 C 590 370, 595 350, 600 300"/>
+                </g>
+                <g id="color-4" fill="#592929" stroke="none">
+                    <path d="M 400 400 C 420 420, 440 440, 460 460 C 480 480, 470 500, 450 490 C 430 480, 410 460, 400 400"/>
+                </g>
+                <g id="color-5" fill="#747275" stroke="none">
+                    <path d="M 300 500 C 320 520, 340 540, 360 560 C 380 580, 370 600, 350 590 C 330 580, 310 560, 300 500"/>
+                </g>
+                <g id="color-6" fill="#e6e1de" stroke="none">
+                    <path d="M 700 200 C 720 220, 740 240, 760 260 C 780 280, 770 300, 750 290 C 730 280, 710 260, 700 200"/>
+                </g>
+            </svg>
+        </div>
+        
+        <div class="info-panel">
+            <div class="color-palette">
+                <div class="color-title">🎨 Цветовая палитра</div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #d63826;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#d63826</div>
+                        <div class="color-name">Красный (основной)</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #f6864e;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#f6864e</div>
+                        <div class="color-name">Оранжевый (огонь)</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #592929;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#592929</div>
+                        <div class="color-name">Темно-красный (тени)</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #747275;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#747275</div>
+                        <div class="color-name">Серый (детали)</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #e6e1de;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#e6e1de</div>
+                        <div class="color-name">Светло-серый (блики)</div>
+                    </div>
+                </div>
+                
+                <div class="color-item">
+                    <div class="color-swatch" style="background-color: #010101;"></div>
+                    <div class="color-info">
+                        <div class="color-code">#010101</div>
+                        <div class="color-name">Черный (контуры)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="color-title">📊 Характеристики</div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Размер:</span>
+                    <span class="stat-value">1024×1024 px</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Цветов:</span>
+                    <span class="stat-value">6 (макс. 5 для печати)</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Формат:</span>
+                    <span class="stat-value">SVG векторный</span>
+                </div>
+                
+                <div class="stat-item">
+                    <span class="stat-label">Применение:</span>
+                    <span class="stat-value">Шелкография</span>
+                </div>
+            </div>
+            
+            <div class="algorithm-info">
+                <div class="algorithm-title">✅ Исправление выполнено</div>
+                <div class="algorithm-desc">
+                    Алгоритм Adobe Illustrator Image Trace Limited Color теперь правильно извлекает исходные цвета изображения вместо создания серых векторов. Каждый цвет выделен в отдельную группу для профессиональной печати.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BOOOMERANGS - Умный AI Чат</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff4b2b;
+      --primary-light: #ff6347;
+      --primary-dark: #e03011;
+      --secondary: #6c63ff;
+      --secondary-light: #7e76ff;
+      --secondary-dark: #5a51de;
+      --accent: #27ae60;
+      --background: #f9f9f9;
+      --card-bg: #ffffff;
+      --text: #333;
+      --text-light: #666;
+      --border: #ddd;
+      --shadow: rgba(0, 0, 0, 0.1);
+      --gradient: linear-gradient(135deg, #ff4b2b, #ff416c);
+    }
+    
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --background: #1a1a2e;
+        --card-bg: #252538;
+        --text: #e6e6e6;
+        --text-light: #aaa;
+        --border: #40405c;
+        --shadow: rgba(0, 0, 0, 0.3);
+      }
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Montserrat', sans-serif;
+    }
+    
+    body {
+      background-color: #0f0f1a;
+      color: #e6e6e6;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 8px;
+    }
+    
+    /* Адаптивные размеры контейнера */
+    @media (min-width: 640px) {
+      .container {
+        max-width: 600px;
+        padding: 12px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .container {
+        max-width: 800px;
+        padding: 16px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .container {
+        max-width: 1000px;
+        padding: 20px;
+      }
+    }
+    
+    @media (min-width: 1280px) {
+      .container {
+        max-width: 1200px;
+        padding: 24px;
+      }
+    }
+    
+    .header-compact {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      position: relative;
+      background-color: #000000;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      margin-bottom: 8px;
+      border: 1px solid #333333;
+      gap: 8px;
+    }
+    
+    /* Premium gradient header design */
+    .header-gradient {
+      background: linear-gradient(135deg, rgba(147, 51, 234, 0.3) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(139, 69, 196, 0.3) 100%);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(147, 51, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .header-gradient::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 40%, rgba(147, 51, 234, 0.1) 50%, transparent 60%);
+      pointer-events: none;
+    }
+    
+    /* Logo container with glow effect */
+    .logo-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, #a855f7, #3b82f6);
+      border-radius: 50%;
+      blur: 20px;
+      opacity: 0.3;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Gradient text effect */
+    .gradient-text {
+      background: linear-gradient(135deg, #a855f7 0%, #3b82f6 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: bold;
+    }
+    
+    /* Subtitle styling */
+    .subtitle {
+      color: rgba(196, 181, 253, 0.8);
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 2px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Title section layout */
+    .title-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    /* Адаптивная навигация */
+    @media (min-width: 640px) {
+      .header-compact {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px;
+        margin-bottom: 12px;
+        gap: 0;
+      }
+      
+      .subtitle {
+        font-size: 0.875rem;
+      }
+      
+      .left-section {
+        gap: 12px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .header-compact {
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      
+      .subtitle {
+        font-size: 1rem;
+      }
+      
+      .left-section {
+        gap: 16px;
+      }
+    }
+    
+    .left-section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Адаптивный логотип */
+    .logo-image {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    @media (min-width: 640px) {
+      .logo-image {
+        width: 44px;
+        height: 44px;
+      }
+      
+      .left-section {
+        gap: 10px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .logo-image {
+        width: 48px;
+        height: 48px;
+      }
+      
+      .left-section {
+        gap: 12px;
+      }
+    }
+    
+    .logo-image:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3);
+    }
+    
+    .tagline {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: transparent;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+    
+    @media (min-width: 640px) {
+      .tagline {
+        font-size: 0.9rem;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .tagline {
+        font-size: 1rem;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .tagline {
+        font-size: 1.1rem;
+      }
+    }
+    
+    .navigation {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 5px 0;
+      flex-wrap: wrap;
+    }
+    
+    .main-layout {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      position: relative;
+    }
+    
+    .sidebar {
+      width: 200px;
+      background: #000000;
+      border-radius: 10px;
+      padding: 12px;
+      border: 1px solid #333333;
+      max-height: calc(100vh - 140px);
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      margin-left: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chat-sessions-list {
+      flex: 1;
+      overflow-y: auto;
+      margin: -4px;
+      padding: 4px;
+    }
+    
+    /* Стильная прокрутка только для списка чатов */
+    .chat-sessions-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chat-sessions-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    
+    .chat-sessions-list::-webkit-scrollbar-thumb {
+      background: rgba(108, 99, 255, 0.6);
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+    
+    .chat-sessions-list::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 99, 255, 0.9);
+    }
+    
+    .sidebar.hidden {
+      margin-left: -216px;
+      opacity: 0;
+    }
+    
+    .sidebar-toggle {
+      position: fixed;
+      top: 50%;
+      left: 5px;
+      transform: translateY(-50%);
+      background: linear-gradient(135deg, #6c63ff, #5a52d5);
+      color: white;
+      border: none;
+      width: 25px;
+      height: 50px;
+      border-radius: 0 15px 15px 0;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      z-index: 9999;
+      box-shadow: 0 0 30px rgba(108, 99, 255, 0.8), 5px 0 20px rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid #ffffff;
+      opacity: 0.9;
+    }
+    
+    .sidebar-toggle:hover {
+      background: linear-gradient(135deg, #5a52d5, #4338ca);
+      transform: translateY(-50%) scale(1.1);
+      opacity: 1;
+      box-shadow: 0 0 40px rgba(108, 99, 255, 1), 5px 0 25px rgba(0, 0, 0, 0.7);
+    }
+    
+    .chat-container {
+      flex: 1;
+      transition: all 0.3s ease;
+      min-width: 0;
+      margin-left: 35px;
+    }
+    
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #40405c;
+    }
+    
+    .sidebar-title {
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin: 0;
+    }
+    
+    .new-chat-btn {
+      background: #6c63ff;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    
+    .new-chat-btn:hover {
+      background: #5a52d5;
+      transform: translateY(-1px);
+    }
+    
+    .chat-session {
+      background: #111111;
+      border: 1px solid #333333;
+      border-radius: 6px;
+      padding: 8px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .chat-session:hover {
+      border-color: #6c63ff;
+      background: #222222;
+    }
+    
+    .chat-session.active {
+      border-color: #6c63ff;
+      background: #1a1a1a;
+    }
+    
+    .session-title {
+      color: #ffffff;
+      font-weight: 500;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 40px;
+    }
+    
+    .session-date {
+      color: #b8b8b8;
+      font-size: 0.75rem;
+    }
+    
+    .session-delete {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.2s;
+    }
+    
+    .chat-session:hover .session-delete {
+      opacity: 1;
+    }
+    
+    .session-delete:hover {
+      background: #dc2626;
+    }
+    
+    .nav-button {
+      padding: 5px 12px;
+      background: #0a0a0a;
+      border: 1px solid #333333;
+      border-radius: 6px;
+      color: #d1d5db;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    
+    .nav-button:hover {
+      background: #1a1a1a;
+      color: white;
+      border-color: #555555;
+    }
+    
+    .nav-button.active {
+      background: linear-gradient(135deg, #6c63ff, #5a52d5);
+      color: white;
+      border-color: #6c63ff;
+    }
+    
+    .chat-container {
+      background-color: #000000;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+      padding: 8px;
+      margin-bottom: 8px;
+      height: 60vh;
+      min-height: 300px;
+      max-height: 600px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #333333;
+    }
+    
+    /* Адаптивные размеры для разных экранов */
+    @media (min-width: 640px) {
+      .chat-container {
+        height: 65vh;
+        min-height: 400px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .chat-container {
+        height: 70vh;
+        min-height: 500px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .chat-container {
+        height: 75vh;
+        min-height: 600px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+    }
+    
+    @media (min-width: 1280px) {
+      .chat-container {
+        height: 80vh;
+        min-height: 650px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+    }
+    
+    .chat-header {
+      padding: 5px;
+      border-bottom: 1px solid #333333;
+      margin-bottom: 3px;
+      background: #111111;
+      border-radius: 5px 5px 0 0;
+    }
+    
+    .chat-title {
+      font-size: 0.9rem;
+      margin-bottom: 0;
+      font-weight: 600;
+      text-align: center;
+      color: #f3f4f6;
+    }
+    
+    .chat-subtitle {
+      font-size: 0.9rem;
+      color: #9ca3af;
+    }
+    
+    .chat-messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 4px;
+      margin-bottom: 2px;
+      background-color: #0a0a0a;
+      border-radius: 8px;
+      color: #e6e6e6;
+    }
+    
+    /* Стильная прокрутка для области сообщений */
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(108, 99, 255, 0.6);
+      border-radius: 10px;
+      transition: background 0.2s ease;
+    }
+    
+    .chat-messages::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 99, 255, 0.9);
+    }
+    
+    /* Адаптивные отступы для области сообщений (минимальные) */
+    @media (min-width: 640px) {
+      .chat-messages {
+        padding: 6px;
+        margin-bottom: 3px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .chat-messages {
+        padding: 8px;
+        margin-bottom: 4px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .chat-messages {
+        padding: 10px;
+        margin-bottom: 5px;
+      }
+    }
+    
+    .message {
+      max-width: 80%;
+      margin-bottom: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      position: relative;
+      line-height: 1.3;
+      font-size: 0.8rem;
+    }
+    
+    /* Адаптивные размеры сообщений (компактные) */
+    @media (min-width: 640px) {
+      .message {
+        margin-bottom: 5px;
+        padding: 5px 10px;
+        font-size: 0.85rem;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .message {
+        margin-bottom: 6px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .message {
+        margin-bottom: 8px;
+        padding: 8px 14px;
+        font-size: 0.95rem;
+      }
+    }
+    
+    .message.user {
+      background: #1e40af;
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+      border-bottom-right-radius: 0;
+      box-shadow: 0 3px 10px rgba(30, 64, 175, 0.4);
+    }
+    
+    .message.user p {
+      color: #ffffff !important;
+      font-weight: 400;
+    }
+    
+    .message.ai {
+      background: #1f2937;
+      color: #ffffff;
+      align-self: flex-start;
+      margin-right: auto;
+      border-bottom-left-radius: 0;
+      box-shadow: 0 3px 10px rgba(31, 41, 55, 0.4);
+    }
+    
+    .message.ai p {
+      color: #ffffff !important;
+      font-weight: 400;
+    }
+    
+    .message.thinking {
+      background-color: var(--border);
+      color: var(--text);
+      align-self: flex-start;
+      margin-right: auto;
+      border-bottom-left-radius: 0;
+    }
+    
+    .message p {
+      margin: 0 !important;
+      padding: 0 !important;
+      font-size: 0.95rem !important;
+      line-height: 1.5 !important;
+      word-wrap: break-word !important;
+      white-space: pre-wrap !important;
+      color: inherit !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    .message-metadata {
+      font-size: 0.7rem;
+      margin-top: 5px;
+      opacity: 0.8;
+    }
+    
+    .chat-input-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-top: 1px solid #333333;
+      padding-top: 8px;
+      background: #0a0a0a;
+      border-radius: 0 0 8px 8px;
+      padding: 8px;
+    }
+    
+    .file-input-container {
+      position: relative;
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .file-button {
+      width: 30px;
+      height: 30px;
+      background-color: #374151;
+      color: #d1d5db;
+      border: 1px solid #40405c;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+    
+    /* Адаптивные размеры для кнопки файла */
+    @media (min-width: 640px) {
+      .file-button {
+        width: 36px;
+        height: 36px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .file-button {
+        width: 40px;
+        height: 40px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .file-button {
+        width: 44px;
+        height: 44px;
+      }
+    }
+    
+    .file-button:hover {
+      background-color: var(--secondary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .chat-input {
+      flex-grow: 1;
+      padding: 6px 10px;
+      border: 1px solid #40405c;
+      border-radius: 6px;
+      background-color: #374151;
+      color: #f3f4f6;
+      font-size: 0.85rem;
+      resize: none;
+      height: 30px;
+    }
+    
+    /* Адаптивные размеры для поля ввода */
+    @media (min-width: 640px) {
+      .chat-input {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        height: 36px;
+        border-radius: 7px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .chat-input {
+        padding: 10px 14px;
+        font-size: 0.95rem;
+        height: 40px;
+        border-radius: 8px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .chat-input {
+        padding: 12px 16px;
+        font-size: 1rem;
+        height: 44px;
+        border-radius: 8px;
+      }
+    }
+    
+    .chat-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .send-button {
+      padding: 6px 12px;
+      background: linear-gradient(135deg, #6c63ff, #5a52d5);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.85rem;
+      height: 30px;
+    }
+    
+    /* Адаптивные размеры для кнопки отправки */
+    @media (min-width: 640px) {
+      .send-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        height: 36px;
+        border-radius: 7px;
+      }
+    }
+    
+    @media (min-width: 768px) {
+      .send-button {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        height: 40px;
+        border-radius: 8px;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .send-button {
+        padding: 12px 20px;
+        font-size: 1rem;
+        height: 44px;
+        border-radius: 8px;
+      }
+    }
+    
+    .send-button:hover {
+      background: linear-gradient(135deg, #5a52d5, #4338ca);
+      transform: translateY(-2px);
+    }
+    
+    .image-preview {
+      margin-bottom: 15px;
+      position: relative;
+    }
+    
+    .preview-image {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+    }
+    
+    /* Адаптивные размеры превью изображений */
+    @media (max-width: 640px) {
+      .image-preview-container {
+        max-width: 260px !important;
+      }
+      
+      .image-preview-container img {
+        max-height: 220px !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .image-preview-container {
+        max-width: 240px !important;
+      }
+      
+      .image-preview-container img {
+        max-height: 200px !important;
+      }
+    }
+    
+    .remove-image {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      width: 20px;
+      height: 20px;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    .category-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.2), rgba(126, 118, 255, 0.2));
+      color: var(--secondary-dark);
+      border-radius: 50px;
+      font-size: 0.75rem;
+      margin-right: 5px;
+      margin-top: 5px;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(108, 99, 255, 0.1);
+    }
+    
+    .provider-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      background: rgba(100, 100, 100, 0.2);
+      color: #888888;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      margin-right: 3px;
+      margin-top: 3px;
+      font-weight: 400;
+      opacity: 0.7;
+      border: 1px solid rgba(120, 120, 120, 0.3);
+    }
+    
+    .info-box {
+      background: linear-gradient(135deg, rgba(108, 99, 255, 0.05), rgba(255, 75, 43, 0.05));
+      border-left: 4px solid var(--secondary);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 3px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .info-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .info-content {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 10px 0;
+      margin-top: 15px;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      background: #111111;
+      border-radius: 0 0 10px 10px;
+      border: 1px solid #333333;
+      border-top: none;
+    }
+    
+    /* Улучшенная мобильная адаптация */
+    @media (max-width: 639px) {
+      body {
+        padding: 4px;
+      }
+      
+      .container {
+        padding: 4px;
+      }
+      
+      .header-compact {
+        padding: 8px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+      }
+      
+      .chat-container {
+        height: calc(100vh - 160px);
+        min-height: 250px;
+        padding: 8px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+      }
+      
+      .chat-messages {
+        padding: 6px;
+        margin-bottom: 4px;
+      }
+      
+      .message {
+        max-width: 85%;
+        margin-bottom: 6px;
+        padding: 6px 10px;
+        font-size: 0.85rem;
+      }
+      
+      .nav-button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+        border-radius: 4px;
+      }
+      
+      .navigation {
+        gap: 6px;
+        margin: 4px 0;
+      }
+      
+      .chat-input-container {
+        padding: 6px;
+        gap: 8px;
+      }
+      
+      .file-button {
+        width: 32px;
+        height: 32px;
+      }
+      
+      .chat-input {
+        padding: 8px 10px;
+        height: 32px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+      }
+      
+      .send-button {
+        padding: 6px 10px;
+        height: 32px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+      }
+      
+      .footer {
+        padding: 8px 0;
+        margin-top: 8px;
+        font-size: 0.8rem;
+      }
+    }
+    
+    /* Оптимизация для очень маленьких экранов */
+    @media (max-width: 380px) {
+      .tagline {
+        font-size: 0.7rem;
+      }
+      
+      .chat-title {
+        font-size: 0.8rem;
+      }
+      
+      .message {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+      }
+      
+      .nav-button {
+        padding: 4px 8px;
+        font-size: 0.75rem;
+      }
+    }
+    
+
+    
+    /* Индикатор статуса процесса */
+    .status-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9, #4c1d95);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 20px;
+      box-shadow: 
+        0 8px 32px rgba(139, 92, 246, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(20px);
+      border: 1.5px solid rgba(255, 255, 255, 0.15);
+      z-index: 1000;
+      min-width: 200px;
+      max-width: 280px;
+      transform: translateX(120%) scale(0.9);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .status-indicator.show {
+      transform: translateX(0) scale(1);
+      opacity: 1;
+    }
+    
+    .status-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    
+    .status-icon,
+    .boomerang-icon {
+      width: 18px;
+      height: 18px;
+      animation: fly-boomerang 1.8s ease-in-out infinite !important;
+      transform-origin: center !important;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    }
+    
+    @keyframes fly-boomerang {
+      0% { 
+        transform: translateX(-6px) rotate(-30deg) scale(0.9);
+        opacity: 0.8;
+      }
+      25% {
+        transform: translateX(0px) rotate(0deg) scale(1.0);
+        opacity: 1;
+      }
+      50% { 
+        transform: translateX(6px) rotate(30deg) scale(1.1);
+        opacity: 1;
+      }
+      75% {
+        transform: translateX(0px) rotate(0deg) scale(1.0);
+        opacity: 1;
+      }
+      100% { 
+        transform: translateX(-6px) rotate(-30deg) scale(0.9);
+        opacity: 0.8;
+      }
+    }
+    
+    .status-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff, #f3f4f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .status-message {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      line-height: 1.2;
+      font-weight: 500;
+    }
+    
+    .status-progress {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .status-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #ffffff, #e5e7eb);
+      border-radius: 2px;
+      width: 0%;
+      animation: progress 2s ease-in-out infinite;
+    }
+    
+    @keyframes progress {
+      0%, 100% { width: 0%; }
+      50% { width: 100%; }
+    }
+    
+    /* Адаптивный статус для мобильных */
+    @media (max-width: 639px) {
+      .status-indicator {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+        padding: 10px 12px;
+      }
+      
+      .status-title {
+        font-size: 0.8rem;
+      }
+      
+      .status-message {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Индикатор статуса процесса -->
+  <div class="status-indicator" id="status-indicator">
+    <div class="status-header">
+      <div class="boomerang-container" style="width: 20px; height: 20px; position: relative;">
+        <div class="boomerang" style="
+          width: 16px; 
+          height: 4px; 
+          background: linear-gradient(45deg, #8b5cf6, #a855f7); 
+          border-radius: 2px;
+          position: absolute;
+          top: 8px;
+          left: 2px;
+          animation: fly-boomerang 1.5s ease-in-out infinite;
+          transform-origin: center;
+        ">🪃</div>
+      </div>
+      <div class="status-title" id="status-title">Обработка запроса</div>
+    </div>
+    <div class="status-message" id="status-message">AI анализирует ваш запрос...</div>
+    <div class="status-progress">
+      <div class="status-progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Кнопка переключения боковой панели -->
+  <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()">‹</button>
+
+  <div class="container">
+    <div class="header-compact header-gradient">
+      <div class="left-section">
+        <div class="logo-container">
+          <div class="logo-glow"></div>
+          <img src="booomerangs-logo.jpg" alt="BOOOMERANGS Logo" class="logo-image">
+        </div>
+        <div class="title-section">
+          <h1 class="tagline gradient-text">BOOOMERANGS AI</h1>
+          <p class="subtitle">Мощная AI платформа для бизнеса</p>
+        </div>
+      </div>
+      <nav class="navigation">
+        <a href="/smart-chat" class="nav-button active">Чат</a>
+        <a href="/image-generator" class="nav-button">Генератор</a>
+      </nav>
+    </div>
+    
+    <div class="main-layout">
+      <!-- Боковая панель с историей чатов -->
+      <div class="sidebar hidden" id="sidebar">
+        <div class="sidebar-header">
+          <h3 class="sidebar-title">История чатов</h3>
+          <button class="new-chat-btn" onclick="createNewChat()">+ Новый</button>
+        </div>
+        <div class="chat-sessions-list">
+          <div class="chat-sessions" id="chat-sessions">
+            <!-- Сессии будут загружены динамически -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Основная область чата -->
+      <div class="chat-container">
+      <div class="chat-header">
+        <h2 class="chat-title">BOOOMERANGS AI</h2>
+      </div>
+      
+      <div class="chat-messages" id="chat-messages">
+      </div>
+      
+      <div class="image-preview" id="image-preview" style="display: none;">
+        <img src="" alt="Выбранное изображение" class="preview-image" id="preview-image">
+        <button class="remove-image" id="remove-image">✕</button>
+      </div>
+      
+      <div class="chat-input-container">
+        <div class="file-input-container">
+          <input type="file" class="file-input" id="file-input" accept="image/*">
+          <button class="file-button" id="file-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+          </button>
+        </div>
+        <textarea class="chat-input" id="chat-input" placeholder="Напишите сообщение..." rows="1"></textarea>
+        <button class="send-button" id="send-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+    
+
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Получаем элементы интерфейса
+      const chatMessages = document.getElementById('chat-messages');
+      const chatInput = document.getElementById('chat-input');
+      const sendButton = document.getElementById('send-button');
+      const fileButton = document.getElementById('file-button');
+      const fileInput = document.getElementById('file-input');
+      const imagePreview = document.getElementById('image-preview');
+      const previewImage = document.getElementById('preview-image');
+      const removeImageButton = document.getElementById('remove-image');
+      const statusIndicator = document.getElementById('status-indicator');
+      const statusTitle = document.getElementById('status-title');
+      const statusMessage = document.getElementById('status-message');
+      
+      // Переменная для хранения URL загруженного изображения
+      let uploadedImageUrl = null;
+      
+      // Переменные для сохранения истории чатов
+      let currentSessionId = null;
+      const userId = 1; // Временно используем фиксированный ID пользователя
+      
+      // Функции для работы с боковой панелью
+      async function loadChatSessions(forceRefresh = false) {
+        try {
+          const url = forceRefresh ? `/api/chat/sessions?t=${Date.now()}` : '/api/chat/sessions';
+          const response = await fetch(url, {
+            cache: 'no-cache',
+            headers: {
+              'Cache-Control': 'no-cache'
+            }
+          });
+          if (!response.ok) return;
+          
+          const data = await response.json();
+          console.log('📋 Загруженные сессии:', data.sessions);
+          if (data.success && data.sessions) {
+            renderChatSessions(data.sessions);
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки сессий:', error);
+        }
+      }
+      
+      function renderChatSessions(sessions) {
+        const sessionsContainer = document.getElementById('chat-sessions');
+        if (!sessionsContainer) return;
+        
+        console.log('📋 Рендерим сессии:', sessions);
+        sessionsContainer.innerHTML = '';
+        
+        // Фильтруем только валидные сессии
+        const validSessions = sessions.filter(session => session && session.id);
+        
+        if (validSessions.length === 0) {
+          sessionsContainer.innerHTML = '<div style="color: #666; text-align: center; padding: 20px;">Нет сохраненных чатов</div>';
+          return;
+        }
+        
+        validSessions.forEach(session => {
+          const sessionElement = document.createElement('div');
+          sessionElement.className = `chat-session ${session.id === currentSessionId ? 'active' : ''}`;
+          sessionElement.onclick = () => switchToSession(session.id);
+          
+          const date = new Date(session.createdAt).toLocaleDateString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          
+          sessionElement.innerHTML = `
+            <div class="session-title">${session.title}</div>
+            <div class="session-date">${date}</div>
+            <button class="session-delete" onclick="deleteSession(${session.id}, event)">×</button>
+          `;
+          
+          sessionsContainer.appendChild(sessionElement);
+        });
+      }
+      
+      async function switchToSession(sessionId) {
+        currentSessionId = sessionId;
+        
+        // Очищаем текущий чат
+        chatMessages.innerHTML = '';
+        
+        // Загружаем сообщения новой сессии
+        try {
+          const response = await fetch(`/api/chat/sessions/${sessionId}/messages`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.messages) {
+              data.messages.forEach(msg => {
+                console.log('Переключение на сессию - сообщение из БД:', msg);
+                const messageText = msg.content || msg.message || msg.text || 'Сообщение не найдено';
+                const isUser = msg.sender === 'user';
+                
+                addMessage(messageText, isUser, {
+                  provider: msg.provider,
+                  category: msg.category
+                });
+              });
+              
+              // Скролл к последнему сообщению после загрузки
+              setTimeout(() => {
+                scrollToBottom();
+              }, 100);
+            }
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки сообщений:', error);
+        }
+        
+        // Обновляем активную сессию в боковой панели
+        loadChatSessions();
+      }
+      
+      async function createNewChat() {
+        await createNewChatSession();
+        chatMessages.innerHTML = '';
+        await loadChatSessions(true);
+      }
+      
+      async function deleteSession(sessionId, event) {
+        event.stopPropagation();
+        
+        if (!confirm('Удалить эту беседу?')) return;
+        
+        try {
+          console.log(`🗑️ Удаляем сессию ${sessionId}`);
+          const response = await fetch(`/api/chat/sessions/${sessionId}`, {
+            method: 'DELETE'
+          });
+          
+          if (response.ok) {
+            console.log(`✅ Сессия ${sessionId} успешно удалена`);
+            if (sessionId === currentSessionId) {
+              // Если удаляем текущую сессию, создаем новую
+              await createNewChat();
+            } else {
+              // Принудительно обновляем список сессий без кэша
+              await loadChatSessions(true);
+            }
+          } else {
+            console.error(`❌ Ошибка удаления сессии ${sessionId}:`, response.status);
+            // Все равно принудительно обновляем список
+            await loadChatSessions(true);
+          }
+        } catch (error) {
+          console.error('❌ Ошибка удаления сессии:', error);
+          // Обновляем список в любом случае
+          await loadChatSessions();
+        }
+      }
+      
+      // Функции для работы с историей чатов
+      async function createNewChatSession() {
+        try {
+          const response = await fetch('/api/chat/sessions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: userId,
+              title: `Чат ${new Date().toLocaleDateString()}`
+            })
+          });
+          
+          const data = await response.json();
+          if (data.success) {
+            currentSessionId = data.session.id;
+            console.log('Создана новая сессия чата:', currentSessionId);
+          }
+        } catch (error) {
+          console.error('Ошибка создания сессии:', error);
+        }
+      }
+      
+      async function saveMessageToHistory(content, sender, provider = null, category = null) {
+        if (!currentSessionId) {
+          await createNewChatSession();
+        }
+        
+        try {
+          await fetch(`/api/chat/sessions/${currentSessionId}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              content,
+              sender,
+              provider,
+              category
+            })
+          });
+        } catch (error) {
+          console.error('Ошибка сохранения сообщения:', error);
+        }
+      }
+      
+      async function loadChatHistory() {
+        try {
+          const response = await fetch('/api/chat/sessions');
+          
+          // Проверяем, что ответ успешный
+          if (!response.ok) {
+            console.log('Сервер недоступен, создаем новую сессию');
+            await createNewChatSession();
+            return;
+          }
+          
+          const data = await response.json();
+          
+          // Проверяем структуру ответа
+          if (data && data.success && data.sessions && Array.isArray(data.sessions) && data.sessions.length > 0) {
+            // Загружаем последнюю сессию
+            const lastSession = data.sessions[0];
+            currentSessionId = lastSession.id;
+            
+            console.log(`Найдена последняя сессия: ${currentSessionId}`);
+            
+            // Загружаем сообщения из последней сессии
+            const messagesResponse = await fetch(`/api/chat/sessions/${currentSessionId}/messages`);
+            
+            if (messagesResponse.ok) {
+              const messagesData = await messagesResponse.json();
+              
+              if (messagesData && messagesData.success && messagesData.messages && Array.isArray(messagesData.messages) && messagesData.messages.length > 0) {
+                // Очищаем контейнер сообщений перед загрузкой истории
+                if (chatMessages) {
+                  chatMessages.innerHTML = '';
+                }
+                
+                // Восстанавливаем сообщения в интерфейсе
+                messagesData.messages.forEach(msg => {
+                  console.log('Обрабатываем сообщение из БД:', msg);
+                  const messageText = msg.content || msg.message || msg.text || 'Сообщение не найдено';
+                  const isUser = msg.sender === 'user';
+                  
+                  addMessage(messageText, isUser, {
+                    provider: msg.provider,
+                    category: msg.category
+                  });
+                });
+                
+                console.log(`Восстановлена история чата: ${messagesData.messages.length} сообщений`);
+                
+                // Скролл к последнему сообщению после загрузки
+                setTimeout(() => {
+                  scrollToBottom();
+                }, 100);
+                
+                return;
+              }
+            }
+            
+            console.log('Нет сообщений в последней сессии');
+          } else {
+            console.log('Нет доступных сессий, создаем новую');
+            await createNewChatSession();
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки истории:', error);
+          // Создаем новую сессию только в случае критической ошибки
+          await createNewChatSession();
+        }
+      }
+      
+      // Функции управления статусом процесса
+      function showStatus(title, message) {
+        statusTitle.textContent = title;
+        statusMessage.textContent = message;
+        statusIndicator.classList.add('show');
+      }
+      
+      function hideStatus() {
+        statusIndicator.classList.remove('show');
+      }
+      
+      function updateStatus(title, message) {
+        if (statusIndicator.classList.contains('show')) {
+          statusTitle.textContent = title;
+          statusMessage.textContent = message;
+        }
+      }
+      
+      // Функция для показа уведомления о сохранении
+      function showTemporarySaveNotification() {
+        // Создаем временное уведомление о сохранении
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          background: linear-gradient(135deg, #10b981, #059669);
+          color: white;
+          padding: 12px 16px;
+          border-radius: 8px;
+          font-size: 0.9rem;
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+          z-index: 1001;
+          opacity: 0;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+        `;
+        notification.innerHTML = '💾 Чат сохранен в историю';
+        
+        document.body.appendChild(notification);
+        
+        // Показываем уведомление
+        setTimeout(() => {
+          notification.style.opacity = '1';
+          notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Скрываем через 2 секунды
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transform = 'translateX(100%)';
+          
+          setTimeout(() => {
+            document.body.removeChild(notification);
+          }, 300);
+        }, 2000);
+      }
+      
+      // Функция для получения последнего сгенерированного изображения
+      function getLastGeneratedImage() {
+        const messages = document.querySelectorAll('.message.ai img');
+        if (messages.length > 0) {
+          const lastImage = messages[messages.length - 1];
+          return lastImage.src;
+        }
+        return null;
+      }
+      
+      // Функция для определения типа операции и показа соответствующего статуса
+      function detectOperationType(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // Проверяем команды редактирования изображений
+        if (lowerMessage.includes('убери') || lowerMessage.includes('удали') || 
+            lowerMessage.includes('убрать') || lowerMessage.includes('удалить') ||
+            lowerMessage.includes('измени') || lowerMessage.includes('поменяй') ||
+            lowerMessage.includes('добавь') || lowerMessage.includes('сделай')) {
+          // Проверяем, есть ли предыдущее изображение для редактирования
+          const lastImage = getLastGeneratedImage();
+          if (lastImage) {
+            return {
+              title: '✏️ Редактирование изображения',
+              message: 'AI редактирует предыдущее изображение...'
+            };
+          }
+        }
+        
+        // Проверяем запросы на создание дизайнов для вышивки
+        if ((lowerMessage.includes('создай') || lowerMessage.includes('создаг') || lowerMessage.includes('сгенерируй') || 
+             lowerMessage.includes('нарисуй')) && 
+            (lowerMessage.includes('вышивк') || lowerMessage.includes('вышивку') || lowerMessage.includes('dst') || 
+             lowerMessage.includes('pes') || lowerMessage.includes('jef'))) {
+          return {
+            title: '🧵 Создание дизайна для вышивки',
+            message: 'AI создает изображение и конвертирует в формат вышивки...'
+          };
+        }
+        
+        // Проверяем запросы на продвинутую векторизацию
+        if (lowerMessage.includes('супер векторизация') || lowerMessage.includes('профи качество') || 
+            lowerMessage.includes('ультра svg') || lowerMessage.includes('премиум векторизация') ||
+            lowerMessage.includes('профессиональная векторизация') || lowerMessage.includes('многоформатная векторизация') ||
+            lowerMessage.includes('превью векторизации') || lowerMessage.includes('оптимизация для печати') ||
+            lowerMessage.includes('оптимизация для веба') || lowerMessage.includes('векторизация в eps') ||
+            lowerMessage.includes('векторизация в pdf') || lowerMessage.includes('пакетная векторизация') ||
+            lowerMessage.includes('потрейс')) {
+          return {
+            title: '🚀 Продвинутая векторизация',
+            message: 'AI выполняет профессиональную векторизацию с множественными форматами...'
+          };
+        }
+
+        // Проверяем запросы на конвертацию в форматы вышивки
+        if (lowerMessage.includes('конвертир') && 
+            (lowerMessage.includes('вышивк') || lowerMessage.includes('dst') || 
+             lowerMessage.includes('pes') || lowerMessage.includes('jef'))) {
+          return {
+            title: '🔄 Конвертация в формат вышивки',
+            message: 'AI конвертирует изображение в формат для вышивальной машины...'
+          };
+        }
+
+        if (lowerMessage.includes('генерир') || lowerMessage.includes('создай') || 
+            lowerMessage.includes('нарисуй') || lowerMessage.includes('изображение')) {
+          return {
+            title: '🎨 Генерация изображения',
+            message: 'AI создает изображение по вашему запросу...'
+          };
+        }
+        
+        if (lowerMessage.includes('анализ') || lowerMessage.includes('распознай') ||
+            lowerMessage.includes('что на') || uploadedImageUrl) {
+          return {
+            title: '🔍 Анализ изображения',
+            message: 'AI анализирует загруженное изображение...'
+          };
+        }
+        
+        if (lowerMessage.includes('код') || lowerMessage.includes('программ') ||
+            lowerMessage.includes('скрипт') || lowerMessage.includes('функция')) {
+          return {
+            title: '💻 Генерация кода',
+            message: 'AI пишет код по вашему запросу...'
+          };
+        }
+        
+        if (lowerMessage.includes('переведи') || lowerMessage.includes('translate')) {
+          return {
+            title: '🌐 Перевод текста',
+            message: 'AI переводит ваш текст...'
+          };
+        }
+        
+        if (lowerMessage.length > 100) {
+          return {
+            title: '📝 Анализ документа',
+            message: 'AI обрабатывает большой текст...'
+          };
+        }
+        
+        return {
+          title: '🪃 Обработка запроса',
+          message: 'AI анализирует ваш запрос...'
+        };
+      }
+      
+      // Обработчик отправки сообщения
+      async function sendMessage() {
+        console.log('🚀 [CHAT] ========== НАЧАЛО ОТПРАВКИ СООБЩЕНИЯ ==========');
+        
+        const messageText = chatInput.value.trim();
+        console.log(`📝 [CHAT] Текст сообщения: "${messageText}"`);
+        console.log(`🖼️ [CHAT] Загруженное изображение: ${uploadedImageUrl ? 'Есть' : 'Нет'}`);
+        
+        // Проверяем, есть ли текст или изображение для отправки
+        if (!messageText && !uploadedImageUrl) {
+          console.log('⚠️ [CHAT] Пустое сообщение - отмена отправки');
+          return;
+        }
+        
+        // Определяем тип операции и показываем соответствующий статус
+        console.log('🎯 [CHAT] Определяем тип операции...');
+        const operationType = detectOperationType(messageText);
+        console.log(`📋 [CHAT] Тип операции: ${operationType.title}`);
+        showStatus(operationType.title, operationType.message);
+        
+        // Добавляем сообщение пользователя
+        console.log('➕ [CHAT] Добавляем сообщение пользователя в UI...');
+        addMessage(messageText, true);
+        
+        // Очищаем поле ввода сразу после добавления сообщения
+        chatInput.value = '';
+        
+        // Сохраняем сообщение пользователя в истории и получаем AI ответ
+        console.log('💾 [CHAT] Сохраняем сообщение пользователя в БД...');
+        try {
+          const response = await fetch(`/api/chat/sessions/${currentSessionId}/messages`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              content: messageText,
+              sender: 'user',
+              provider: null,
+              category: null
+            })
+          });
+          
+          console.log('✅ [CHAT] Сообщение пользователя сохранено в БД');
+          
+          // Если API вернул AI ответ, отображаем его
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.aiResponse) {
+              console.log('🤖 [CHAT] Получен AI ответ:', data.aiResponse);
+              
+              let displayResponse = data.aiResponse;
+              
+              // Добавляем ссылки на файлы, если они есть
+              if (data.files) {
+                displayResponse += `\n\n📁 **Файлы для скачивания:**\n`;
+                
+                if (data.files.embroidery) {
+                  const fileName = data.files.embroidery.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  displayResponse += `\n🧵 [Скачать файл вышивки (${fileName})](${fileUrl})`;
+                }
+                
+                if (data.files.image) {
+                  const fileName = data.files.image.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  displayResponse += `\n🖼️ [Скачать подготовленное изображение (${fileName})](${fileUrl})`;
+                }
+                
+                if (data.files.colorScheme) {
+                  const fileName = data.files.colorScheme.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  displayResponse += `\n🎨 [Скачать цветовую схему (${fileName})](${fileUrl})`;
+                }
+              }
+              
+              addMessage(displayResponse, false, {
+                provider: data.provider || 'AI',
+                category: 'general'
+              });
+              hideStatus();
+              return; // Выходим, не запускаем потоковый режим
+            }
+          }
+        } catch (error) {
+          console.error('❌ [CHAT] Ошибка сохранения сообщения пользователя:', error);
+        }
+        
+        // Создаем пустой div для совместимости с существующим кодом
+        const thinkingDiv = document.createElement('div');
+        thinkingDiv.style.display = 'none'; // Скрываем полностью
+        
+        // Скролл к последнему сообщению
+        scrollToBottom();
+        
+        // Обновляем статус через несколько секунд
+        setTimeout(() => {
+          if (operationType.title.includes('Генерация изображения')) {
+            updateStatus('🎨 Генерация изображения', 'Финализация деталей изображения...');
+          } else if (operationType.title.includes('Анализ изображения')) {
+            updateStatus('🔍 Анализ изображения', 'Распознавание объектов и деталей...');
+          } else {
+            updateStatus(operationType.title, 'Завершение обработки запроса...');
+          }
+        }, 3000);
+        
+        try {
+          // Создаем сообщение AI для потоковой генерации
+          const aiMessageDiv = document.createElement('div');
+          aiMessageDiv.className = 'message ai';
+          
+          const aiMessageText = document.createElement('p');
+          aiMessageText.textContent = '';
+          aiMessageText.style.color = '#ffffff';
+          aiMessageText.style.fontSize = '0.95rem';
+          aiMessageText.style.fontWeight = '400';
+          aiMessageDiv.appendChild(aiMessageText);
+          
+          chatMessages.appendChild(aiMessageDiv);
+          scrollToBottom();
+          
+          // Определяем тип запроса и добавляем соответствующий индикатор
+          const isSearchQuery = /найди|найти|поиск|новости|курс|погода|что происходит|события|информация/i.test(messageText);
+          
+          const typingIndicator = document.createElement('span');
+          typingIndicator.className = 'typing-indicator';
+          
+          if (isSearchQuery) {
+            typingIndicator.innerHTML = '🔍 Поиск информации...';
+            typingIndicator.style.color = '#6c63ff';
+            typingIndicator.style.fontWeight = '500';
+          } else {
+            typingIndicator.innerHTML = '●●●';
+          }
+          
+          aiMessageText.appendChild(typingIndicator);
+          
+          // Запускаем потоковую генерацию
+          await streamAIResponse(messageText, aiMessageText, uploadedImageUrl);
+          
+          // Если есть изображение, сбрасываем его после отправки
+          if (uploadedImageUrl) {
+            resetImageUpload();
+          }
+        } catch (error) {
+          console.error('Ошибка при отправке сообщения:', error);
+          
+          // Безопасно удаляем "думающее" сообщение
+          if (thinkingDiv && thinkingDiv.parentNode) {
+            thinkingDiv.parentNode.removeChild(thinkingDiv);
+          }
+          
+          // Скрываем индикатор статуса
+          hideStatus();
+          
+          // Показываем сообщение об ошибке
+          addMessage('Произошла ошибка при отправке сообщения. Пожалуйста, попробуйте еще раз.', false, { provider: 'Ошибка', category: 'error' });
+        }
+      }
+      
+      // Функция для потоковой генерации ответов AI
+      async function streamAIResponse(message, messageElement, imageUrl = null) {
+        console.log(`🚀 [STREAMING] Начинаем потоковую генерацию для сообщения: "${message}"`);
+        
+        const typingIndicator = messageElement.querySelector('.typing-indicator');
+        let fullResponse = '';
+        let currentProvider = '';
+        
+        // Проверяем, является ли это запросом на вышивку
+        const lowerMessage = message.toLowerCase();
+        const isEmbroideryRequest = (lowerMessage.includes('вышивк') || lowerMessage.includes('вышивку') || lowerMessage.includes('dst') || 
+                                   lowerMessage.includes('pes') || lowerMessage.includes('jef')) &&
+                                  (lowerMessage.includes('создай') || lowerMessage.includes('создаг') || lowerMessage.includes('сгенерируй') || 
+                                   lowerMessage.includes('нарисуй') || lowerMessage.includes('конвертир'));
+        
+        try {
+          let apiEndpoint = '/api/stream';
+          let requestBody = {
+            message: message,
+            provider: 'Qwen_Qwen_2_5_Max',
+            sessionId: currentSessionId,
+            timeout: 30000
+          };
+          
+          // Если это запрос на вышивку, используем smart router
+          if (isEmbroideryRequest) {
+            console.log('🧵 [STREAMING] Обнаружен запрос на вышивку, используем smart router...');
+            apiEndpoint = '/api/smart/route';
+            requestBody = {
+              message: message,
+              sessionId: currentSessionId,
+              userId: 'user_1'
+            };
+          }
+          
+          console.log(`📡 [STREAMING] Отправляем запрос к ${apiEndpoint}...`);
+          // Делаем запрос к соответствующему серверу
+          const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody),
+          });
+
+          if (!response.ok) {
+            console.error(`❌ [STREAMING] Ошибка HTTP: ${response.status} ${response.statusText}`);
+            throw new Error(`Ошибка стримингового сервера: ${response.status}`);
+          }
+
+          // Если это запрос на вышивку, обрабатываем как JSON ответ
+          if (isEmbroideryRequest) {
+            console.log('✅ [EMBROIDERY] Получен ответ от smart router, обрабатываем JSON...');
+            const jsonResponse = await response.json();
+            console.log('🧵 [EMBROIDERY] Ответ smart router:', jsonResponse);
+            
+            if (typingIndicator) {
+              typingIndicator.remove();
+            }
+            
+            if (jsonResponse.success) {
+              let embroideryResponse = jsonResponse.response;
+              
+              // Добавляем ссылки на файлы для скачивания
+              if (jsonResponse.files) {
+                embroideryResponse += `\n\n📁 **Файлы для скачивания:**\n`;
+                
+                if (jsonResponse.files.embroidery) {
+                  const fileName = jsonResponse.files.embroidery.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  embroideryResponse += `\n🧵 [Скачать файл вышивки (${fileName})](${fileUrl})`;
+                }
+                
+                if (jsonResponse.files.image) {
+                  const fileName = jsonResponse.files.image.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  embroideryResponse += `\n🖼️ [Скачать подготовленное изображение (${fileName})](${fileUrl})`;
+                }
+                
+                if (jsonResponse.files.colorScheme) {
+                  const fileName = jsonResponse.files.colorScheme.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  embroideryResponse += `\n🎨 [Скачать цветовую схему (${fileName})](${fileUrl})`;
+                }
+              }
+              
+              // Добавляем информацию о файлах и деталях
+              if (jsonResponse.details) {
+                embroideryResponse += `\n\n**Детали дизайна:**\n`;
+                embroideryResponse += `- Цвета: ${jsonResponse.details.colors}\n`;
+                embroideryResponse += `- Размер: ${jsonResponse.details.size}\n`;
+                embroideryResponse += `- Формат: ${jsonResponse.embroideryFormat?.name || 'DST'}\n`;
+                embroideryResponse += `- Нитки: ${jsonResponse.details.threadsNeeded}\n`;
+              }
+              
+              if (jsonResponse.generatedImage) {
+                embroideryResponse += `\n![Дизайн для вышивки](${jsonResponse.generatedImage})`;
+              }
+              
+              if (jsonResponse.instructions) {
+                embroideryResponse += `\n\n**Инструкции:**\n`;
+                jsonResponse.instructions.forEach((instruction, index) => {
+                  embroideryResponse += `${index + 1}. ${instruction}\n`;
+                });
+              }
+              
+              fullResponse = embroideryResponse;
+              messageElement.innerHTML = parseMarkdown(fullResponse);
+            } else {
+              fullResponse = `Ошибка создания дизайна: ${jsonResponse.error}`;
+              messageElement.innerHTML = parseMarkdown(fullResponse);
+            }
+            
+            hideStatus();
+            scrollToBottom();
+            return;
+          }
+
+          console.log('✅ [STREAMING] Получен ответ от сервера, начинаем чтение потока...');
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          let chunkCount = 0;
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+              console.log(`📤 [STREAMING] Поток завершен. Получено чанков: ${chunkCount}`);
+              break;
+            }
+
+            chunkCount++;
+            const chunk = decoder.decode(value);
+            console.log(`📥 [STREAMING] Чанк ${chunkCount}: "${chunk.substring(0, 100)}..."`);
+            
+            const lines = chunk.split('\n');
+
+            for (const line of lines) {
+              // Обрабатываем события изображений
+              if (line.startsWith('event: image')) {
+                console.log('🎨 [STREAMING] Обнаружено событие изображения!');
+                continue;
+              }
+              
+              if (line.startsWith('data: ')) {
+                try {
+                  const data = JSON.parse(line.slice(6));
+                  console.log(`🔍 [STREAMING] Обработка данных:`, data);
+                  
+                  // Специальная обработка изображений
+                  if (data.imageUrl) {
+                    console.log('🖼️ [STREAMING] Получен URL изображения:', data.imageUrl);
+                    
+                    // Убираем индикатор печатания
+                    if (typingIndicator) {
+                      typingIndicator.remove();
+                    }
+                    
+                    // Создаем markdown для изображения
+                    const imageMarkdown = `🎨 Изображение создано! Вот ваш дизайн:\n![Сгенерированное изображение](${data.imageUrl})`;
+                    fullResponse = imageMarkdown;
+                    
+                    // Обрабатываем markdown и отображаем изображение
+                    let processedText = imageMarkdown;
+                    const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+                    const match = imageRegex.exec(imageMarkdown);
+                    
+                    if (match) {
+                      const [fullMatch, altText, imageUrl] = match;
+                      const imageHTML = `
+                        <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                          <p style="color: #6c63ff; margin-bottom: 10px;">🎨 Изображение создано! Вот ваш дизайн:</p>
+                          <img src="${imageUrl}" 
+                               alt="${altText || 'Сгенерированное изображение'}" 
+                               style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; max-height: 300px; object-fit: contain;"
+                               onload="console.log('✅ [STREAMING] Изображение загружено:', '${imageUrl}')"
+                               onerror="console.error('❌ [STREAMING] Ошибка загрузки:', '${imageUrl}');">
+                          <p style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: #ccc;">${altText || 'Сгенерированное AI изображение'}</p>
+                        </div>
+                      `;
+                      processedText = processedText.replace(fullMatch, imageHTML);
+                    }
+                    
+                    messageElement.innerHTML = processedText;
+                    await saveMessageToHistory(imageMarkdown, 'ai', 'AI_Image_Generator');
+                    console.log('✅ [STREAMING] Изображение успешно отображено и сохранено');
+                    continue;
+                  }
+                  
+                  if (data.provider && !currentProvider) {
+                    currentProvider = data.provider;
+                    console.log(`🤖 [STREAMING] Провайдер: ${currentProvider}`);
+                  }
+                  
+                  if (data.text) {
+                    // Убираем индикатор печатания при первом символе
+                    if (typingIndicator && fullResponse === '') {
+                      console.log('⚡ [STREAMING] Убираем индикатор печатания');
+                      typingIndicator.remove();
+                    }
+                    
+                    fullResponse += data.text;
+                    
+                    // ВАЖНО: Всегда используем innerHTML для корректного отображения
+                    console.log(`📝 [STREAMING] Обновляем текст: "${fullResponse}"`);
+                    
+                    // Быстрое отображение для поисковых результатов
+                    if (data.searchUsed && fullResponse.includes('🔍')) {
+                      console.log('🔍 [SEARCH] Быстрое отображение результатов поиска');
+                      messageElement.innerHTML = parseMarkdown(fullResponse);
+                      scrollToBottom();
+                    }
+                    
+                    // Обрабатываем markdown изображения
+                    let processedText = fullResponse;
+                    if (fullResponse.includes('![') && fullResponse.includes('](')) {
+                      console.log('🎨 [STREAMING] НАЙДЕНЫ ИЗОБРАЖЕНИЯ В ОТВЕТЕ!');
+                      const imageRegex = /!\[([^\]]*)\]\(([^)]+)\)/g;
+                      let match;
+                      
+                      while ((match = imageRegex.exec(fullResponse)) !== null) {
+                        const [fullMatch, altText, imageUrl] = match;
+                        console.log('🎨 [STREAMING] Обрабатываем изображение:', imageUrl);
+                        
+                        // Создаем HTML для изображения
+                        const imageHTML = `
+                          <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                            <img src="${imageUrl}" 
+                                 alt="${altText || 'Сгенерированное изображение'}" 
+                                 style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; max-height: 300px; object-fit: contain;"
+                                 onload="console.log('✅ [STREAMING] Изображение загружено:', '${imageUrl}')"
+                                 onerror="console.error('❌ [STREAMING] Ошибка загрузки:', '${imageUrl}'); this.style.display='none';">
+                            <p style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: #ccc;">${altText || 'Сгенерированное AI изображение'}</p>
+                          </div>
+                        `;
+                        
+                        // Заменяем markdown на HTML
+                        processedText = processedText.replace(fullMatch, imageHTML);
+                      }
+                    }
+                    
+                    // ВСЕГДА используем innerHTML (не textContent!)
+                    // Применяем parseMarkdown для сокращения ссылок
+                    messageElement.innerHTML = parseMarkdown(processedText);
+                    console.log('✅ [STREAMING] Обновлен HTML элемент');
+                    console.log('🖥️ [STREAMING] ФИНАЛЬНЫЙ HTML:', messageElement.innerHTML);
+                    console.log('📊 [STREAMING] Элемент содержит IMG тегов:', messageElement.querySelectorAll('img').length);
+                    
+                    console.log(`📝 [STREAMING] Текст обновлен: ${fullResponse.length} символов`);
+                    scrollToBottom();
+                  }
+                  
+                  if (data.finished) {
+                    console.log(`✅ [STREAMING] Генерация завершена: ${fullResponse.length} символов`);
+                    console.log(`💾 [STREAMING] Сохраняем в БД: "${fullResponse}"`);
+                    
+                    // Сохраняем ответ в базу данных
+                    await saveMessageToHistory(fullResponse, 'ai', currentProvider);
+                    hideStatus();
+                    return;
+                  }
+                } catch (e) {
+                  console.warn(`⚠️ [STREAMING] Ошибка парсинга чанка: ${e.message}`);
+                  continue;
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('❌ [STREAMING] Ошибка потоковой генерации:', error);
+          console.log('🔄 [FALLBACK] Переключаемся на обычный API...');
+          
+          // В случае ошибки используем обычный API
+          if (typingIndicator) {
+            console.log('🗑️ [FALLBACK] Убираем индикатор печатания');
+            typingIndicator.remove();
+          }
+          messageElement.textContent = 'Переключаюсь на обычный режим...';
+          
+          try {
+            console.log('📡 [FALLBACK] Отправляем запрос к /api/smart/message...');
+            const fallbackResponse = await fetch('/api/smart/message', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: message, imageUrl: imageUrl }),
+            });
+            
+            console.log(`📨 [FALLBACK] Статус ответа: ${fallbackResponse.status}`);
+            const data = await fallbackResponse.json();
+            console.log('📋 [FALLBACK] Данные ответа:', data);
+            
+            if (data.success) {
+              console.log(`✅ [FALLBACK] Успешный ответ от ${data.provider}: "${data.response}"`);
+              
+              // Проверяем, есть ли файлы для скачивания (результаты вышивки)
+              if (data.files && (data.files.embroidery || data.files.image || data.files.colorScheme)) {
+                let responseWithFiles = data.response;
+                
+                // Добавляем ссылки на файлы
+                responseWithFiles += '\n\n📁 **Файлы для скачивания:**\n';
+                
+                if (data.files.embroidery) {
+                  const fileName = data.files.embroidery.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  responseWithFiles += `\n🧵 [Скачать файл вышивки (${fileName})](${fileUrl})`;
+                }
+                
+                if (data.files.image) {
+                  const fileName = data.files.image.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  responseWithFiles += `\n🖼️ [Скачать подготовленное изображение (${fileName})](${fileUrl})`;
+                }
+                
+                if (data.files.colorScheme) {
+                  const fileName = data.files.colorScheme.split('/').pop();
+                  const fileUrl = `/output/embroidery/${fileName}`;
+                  responseWithFiles += `\n🎨 [Скачать цветовую схему (${fileName})](${fileUrl})`;
+                }
+                
+                // Добавляем информацию о деталях
+                if (data.details) {
+                  responseWithFiles += '\n\n📋 **Детали:**\n';
+                  if (data.details.colors) responseWithFiles += `\n• Цветов: ${data.details.colors}`;
+                  if (data.details.size) responseWithFiles += `\n• Размер: ${data.details.size}`;
+                  if (data.details.machineFormat) responseWithFiles += `\n• Формат: ${data.details.machineFormat}`;
+                }
+                
+                // Добавляем сгенерированное изображение
+                if (data.generatedImage) {
+                  responseWithFiles += `\n\n![Сгенерированное изображение](${data.generatedImage})`;
+                }
+                
+                messageElement.innerHTML = processMarkdownToHTML(responseWithFiles);
+                await saveMessageToHistory(responseWithFiles, 'ai', data.provider);
+              } else {
+                messageElement.textContent = data.response;
+                await saveMessageToHistory(data.response, 'ai', data.provider);
+              }
+            } else {
+              console.error('❌ [FALLBACK] Неуспешный ответ:', data);
+              messageElement.textContent = 'Произошла ошибка при получении ответа';
+            }
+          } catch (fallbackError) {
+            console.error('❌ [FALLBACK] Критическая ошибка:', fallbackError);
+            messageElement.textContent = 'Не удалось получить ответ от AI';
+          }
+          
+          hideStatus();
+        }
+      }
+
+      // Функция для обработки markdown в HTML
+      function processMarkdownToHTML(text) {
+        // Обрабатываем ссылки [текст](url)
+        text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #6c63ff; text-decoration: none; border-bottom: 1px solid #6c63ff;">$1</a>');
+        
+        // Обрабатываем жирный текст **текст**
+        text = text.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight: 600;">$1</strong>');
+        
+        // Обрабатываем изображения ![alt](url)
+        text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+          return `
+            <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+              <img src="${url}" 
+                   alt="${alt || 'Изображение'}" 
+                   style="max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto; max-height: 300px; object-fit: contain;"
+                   onload="console.log('✅ Изображение загружено:', '${url}')"
+                   onerror="console.error('❌ Ошибка загрузки:', '${url}'); this.style.display='none';">
+              <p style="text-align: center; margin-top: 8px; font-size: 0.8rem; color: #ccc;">${alt || 'Изображение'}</p>
+            </div>
+          `;
+        });
+        
+        // Обрабатываем переносы строк
+        text = text.replace(/\n/g, '<br>');
+        
+        return text;
+      }
+
+      // Функция для добавления сообщения в чат
+      function addMessage(text, isUser, metadata = {}) {
+        console.log(`Добавляем сообщение: "${text}" от ${isUser ? 'пользователя' : 'AI'}`);
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${isUser ? 'user' : 'ai'}`;
+        
+        const messageText = document.createElement('div');
+        
+        // Обрабатываем все сообщения через parseMarkdown для полной поддержки markdown
+        console.log('🔍 [HTML] Исходный текст сообщения:', text.substring(0, 200) + '...');
+        const processedHtml = parseMarkdown(text);
+        console.log('🔍 [HTML] Результат parseMarkdown:', processedHtml.substring(0, 200) + '...');
+        messageText.innerHTML = processedHtml;
+        console.log('🔍 [HTML] Содержимое messageText.innerHTML:', messageText.innerHTML.substring(0, 200) + '...');
+        
+        messageText.style.color = isUser ? '#ffffff' : '#ffffff';
+        messageText.style.fontSize = '0.95rem';
+        messageText.style.fontWeight = '400';
+        messageDiv.appendChild(messageText);
+        
+        // Если есть метаданные и это сообщение от AI, добавляем их
+        if (!isUser && (metadata.provider || metadata.category)) {
+          const metadataDiv = document.createElement('div');
+          metadataDiv.className = 'message-metadata';
+          
+          if (metadata.category) {
+            const categoryBadge = document.createElement('span');
+            categoryBadge.className = 'category-badge';
+            categoryBadge.textContent = metadata.category;
+            metadataDiv.appendChild(categoryBadge);
+          }
+          
+          if (metadata.provider) {
+            const providerBadge = document.createElement('span');
+            providerBadge.className = 'provider-badge';
+            providerBadge.textContent = metadata.provider;
+            metadataDiv.appendChild(providerBadge);
+          }
+          
+          messageDiv.appendChild(metadataDiv);
+        }
+        
+        chatMessages.appendChild(messageDiv);
+        
+        // Скролл к последнему сообщению
+        scrollToBottom();
+      }
+      
+      // Функция для скролла к последнему сообщению
+      function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+      
+      // Обработка загрузки изображений
+      fileButton.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // Проверяем размер файла (не более 5 МБ)
+        if (file.size > 5 * 1024 * 1024) {
+          alert('Размер файла не должен превышать 5 МБ');
+          return;
+        }
+        
+        // Показываем превью
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          previewImage.src = event.target.result;
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+        
+        // Загружаем изображение на сервер
+        try {
+          const formData = new FormData();
+          formData.append('image', file);
+          
+          const response = await fetch('/api/upload/file', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (!response.ok) {
+            throw new Error('Ошибка при загрузке изображения');
+          }
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            uploadedImageUrl = data.imageUrl;
+          } else {
+            throw new Error(data.error || 'Ошибка при загрузке');
+          }
+        } catch (error) {
+          console.error('Ошибка загрузки изображения:', error);
+          alert('Не удалось загрузить изображение. Пожалуйста, попробуйте еще раз.');
+          resetImageUpload();
+        }
+      });
+      
+      // Функция сброса загруженного изображения
+      function resetImageUpload() {
+        uploadedImageUrl = null;
+        imagePreview.style.display = 'none';
+        previewImage.src = '';
+        fileInput.value = '';
+      }
+      
+      // Обработчик удаления изображения
+      removeImageButton.addEventListener('click', resetImageUpload);
+      
+      // Обработчик нажатия кнопки отправки
+      sendButton.addEventListener('click', sendMessage);
+      
+      // Обработчик нажатия Enter в поле ввода
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendMessage();
+        }
+      });
+      
+      // Автоматическая подстройка высоты текстового поля
+      chatInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+      });
+      
+      // Функция для обработки markdown и преобразования ссылок
+      function parseMarkdown(text) {
+        if (!text) return '';
+        
+        console.log('📝 [parseMarkdown] Входной текст:', text.substring(0, 100) + '...');
+        let html = text;
+        
+        // Обрабатываем SVG блоки ПЕРЕД переносами строк
+        html = html.replace(/```svg\n([\s\S]*?)\n```/g, function(match, svgContent) {
+          console.log('🎨 [SVG] Найден SVG блок, длина:', svgContent.length);
+          
+          try {
+            // Очищаем и подготавливаем SVG контент
+            let cleanSvgContent = svgContent.trim();
+            
+            // Убираем лишние символы и фиксируем размеры для превью
+            cleanSvgContent = cleanSvgContent
+              .replace(/width="[^"]*"/g, 'width="300"')
+              .replace(/height="[^"]*"/g, 'height="300"');
+            
+            // Для больших файлов используем оптимизированную версию
+            if (cleanSvgContent.length > 2000000) { // 2MB лимит для критически больших файлов
+              console.log('🎨 [SVG] Файл критически большой, создаем упрощенную версию');
+              
+              // Создаем упрощенную версию SVG только с первыми путями
+              const pathMatches = cleanSvgContent.match(/<path[^>]*>/g);
+              if (pathMatches && pathMatches.length > 20) {
+                // Берем только первые 20 путей для превью
+                const simplifiedPaths = pathMatches.slice(0, 20).join('\n    ');
+                const svgHeader = cleanSvgContent.substring(0, cleanSvgContent.indexOf('<g'));
+                const svgFooter = '</g>\n</svg>';
+                
+                cleanSvgContent = svgHeader + '<g fill="#333" stroke="none">\n    ' + simplifiedPaths + '\n  ' + svgFooter;
+                console.log('🎨 [SVG] Создана упрощенная версия с', 20, 'путями');
+              }
+            }
+            
+            // Используем URL encoding вместо base64 для лучшей совместимости
+            const encodedSvg = encodeURIComponent(cleanSvgContent);
+            const dataUri = `data:image/svg+xml,${encodedSvg}`;
+            
+            // Создаем превью как обычное изображение
+            const svgPreview = `
+              <div style="margin: 15px 0; text-align: center;">
+                <div style="font-size: 11px; color: #666; margin-bottom: 8px; font-weight: 500;">🎨 SVG Превью</div>
+                <div class="image-preview-container" style="max-width: 280px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background: #f8f9fa;">
+                  <img src="${dataUri}" 
+                       alt="SVG векторное изображение" 
+                       style="width: 100%; height: auto; max-height: 250px; display: block; object-fit: contain;"
+                       onload="console.log('✅ [SVG] Изображение загружено')" 
+                       onerror="console.error('❌ [SVG] Ошибка загрузки'); this.style.display='none'; this.nextElementSibling.style.display='block';">
+                  <div style="display: none; padding: 20px; background: #f0f0f0; color: #666; text-align: center;">
+                    ❌ Ошибка загрузки превью
+                  </div>
+                </div>
+              </div>`;
+            
+            console.log('🎨 [SVG] SVG превью создан как изображение');
+            return svgPreview;
+          } catch (error) {
+            console.error('❌ [SVG] Ошибка создания превью:', error);
+            return `<div style="margin: 12px 0; padding: 8px; background: #ffe6e6; border-radius: 4px; color: #d63031;">❌ Ошибка отображения SVG</div>`;
+          }
+        });
+        
+        // Сначала обрабатываем переносы строк, НО сохраняем маркеры для изображений
+        html = html.replace(/\n/g, '<br>');
+        
+        // Сокращаем длинные описания файлов для вышивки
+        html = html.replace(/🧵 \[Скачать файл вышивки \([^)]+\)\]/g, '🧵 [DST файл]');
+        html = html.replace(/🖼️ \[Скачать подготовленное изображение \([^)]+\)\]/g, '🖼️ [PNG превью]');
+        html = html.replace(/🎨 \[Скачать цветовую схему \([^)]+\)\]/g, '🎨 [JSON схема]');
+        
+        // Обрабатываем изображения ![alt](url) - ПОСЛЕ обработки переносов строк
+        html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+          console.log('🖼️ [HTML] Обрабатываем изображение:', { alt, url });
+          return `<div style="margin: 15px 0; text-align: center;"><div class="image-preview-container" style="max-width: 280px; margin: 0 auto; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0,0,0,0.1); background: #f8f9fa;"><img src="${url}" alt="${alt || 'Изображение'}" style="width: 100%; height: auto; max-height: 250px; display: block; object-fit: contain;" onload="console.log('✅ [HTML] Изображение загружено:', '${url}')" onerror="console.error('❌ [HTML] Ошибка загрузки изображения:', '${url}'); this.style.display='none'; this.nextElementSibling.style.display='block';"><div style="display: none; padding: 10px; background: rgba(255,0,0,0.1); border-radius: 4px; color: #ff6b6b;">❌ Не удалось загрузить изображение</div></div>${alt ? `<p style="margin-top: 8px; font-size: 0.9rem; color: #888;">${alt}</p>` : ''}</div>`;
+        });
+        
+        // Обрабатываем обычные ссылки [текст](url)
+        html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color: #4CAF50; text-decoration: underline; font-weight: 500; padding: 2px 4px; background: rgba(76, 175, 80, 0.1); border-radius: 3px;">$1</a>');
+        
+        // Обработка жирного текста **текст**
+        html = html.replace(/\*\*([^*]+)\*\*/g, '<strong style="font-weight: 600;">$1</strong>');
+        
+        // Обработка маркированных списков
+        html = html.replace(/^• (.+)$/gm, '<div style="margin-left: 20px; margin-bottom: 5px;">• $1</div>');
+        
+        console.log('📝 [parseMarkdown] Финальный HTML:', html.substring(0, 200) + '...');
+        return html;
+      }
+
+      // Инициализация приложения - загружаем историю чатов
+      loadChatHistory();
+      
+      // Загружаем список сессий в боковую панель
+      loadChatSessions();
+      
+      // Функция для переключения боковой панели
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('sidebar-toggle');
+        
+        sidebar.classList.toggle('hidden');
+        
+        // Меняем стрелку в зависимости от состояния
+        if (sidebar.classList.contains('hidden')) {
+          toggleBtn.textContent = '›';
+        } else {
+          toggleBtn.textContent = '‹';
+        }
+      }
+      
+      // Делаем функции глобальными для HTML кнопок
+      window.createNewChat = createNewChat;
+      window.deleteSession = deleteSession;
+      window.switchToSession = switchToSession;
+      window.toggleSidebar = toggleSidebar;
+    });
+  </script>
+</body>
+</html>
