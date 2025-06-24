@@ -354,4 +354,4 @@ if __name__ == '__main__':
     logging.info(f"🤖 Загружено {len(available_providers)} провайдеров: {', '.join(available_providers)}")
 
     # Запуск приложения
-    app.run(host='0.0.0.0', port=5004, debug=False)
+    app.run(host='0.0.0.0', port=5001, debug=False)
