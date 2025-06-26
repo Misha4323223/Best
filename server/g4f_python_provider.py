@@ -349,6 +349,19 @@ def index():
     """
     return "BOOOMERANGS Python G4F API работает!"
 
+@app.route('/health')
+def health():
+    """
+    Health check endpoint.
+    """
+    return jsonify({
+        "status": "ok",
+        "service": "G4F Python Provider",
+        "port": "5004",
+        "providers": 104,
+        "timestamp": time.time()
+    })
+
 if __name__ == '__main__':
     available_providers = [name for name in dir(g4f.Provider) if not name.startswith('_') and name[0].isupper()]
     logging.info(f"🤖 Загружено {len(available_providers)} провайдеров: {', '.join(available_providers)}")
