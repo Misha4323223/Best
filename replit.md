@@ -8,8 +8,8 @@
 
 ### Backend Services
 - **Node.js Main Server**: Порт 5000 (Express + TypeScript)
-- **Python G4F Service**: Порт 5001 (Flask + G4F интеграция)  
-- **Python Streaming Service**: Порт 5004 (Потоковая генерация)
+- **Python Streaming Service**: Порт 5001 (Потоковая генерация)
+- **Python G4F Service**: Порт 5004 (Flask + G4F интеграция)
 - **Vectorizer Service**: Порт 5006 (Advanced векторизация)
 
 ### Core Components
