@@ -992,8 +992,21 @@ except Exception as e:
             
             SmartLogger.route(`🔍 СОДЕРЖИМОЕ ЗАГРУЖЕНО! Обработано ${enrichedResults.length} страниц`);
             
-            // Формируем ответ с актуальным содержимым
-            const formattedResponse = `🔍 **Актуальная информация:**
+            // Используем AI для обработки результатов поиска
+            const advancedSearchProvider = require('./advanced-search-provider');
+            const searchAnalysis = await advancedSearchProvider.analyzeSearchResults(enrichedResults, userQuery);
+            
+            let formattedResponse;
+            if (searchAnalysis && searchAnalysis.aiAnswer) {
+              // Используем AI-обработанный ответ
+              formattedResponse = `🔍 **Актуальная информация:**
+
+${searchAnalysis.aiAnswer}
+
+📊 **Проанализировано источников:** ${enrichedResults.length}`;
+            } else {
+              // Fallback к старому формату
+              formattedResponse = `🔍 **Актуальная информация:**
 
 ${enrichedResults.slice(0, 3).map((r, i) => 
 `**${i + 1}. ${r.title}**
@@ -1005,6 +1018,7 @@ ${r.content}
 ---
 
 `).join('')}📊 **Обработано источников:** ${enrichedResults.length}`;
+            }
 
             return {
               success: true,

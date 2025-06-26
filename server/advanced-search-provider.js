@@ -211,8 +211,12 @@ async function analyzeSearchResults(results, originalQuery) {
     const sources = results.map(r => r.source).filter((v, i, a) => a.indexOf(v) === i);
     const topResults = results.slice(0, 5);
     
+    // Генерируем AI-обработанный ответ
+    const aiProcessedAnswer = await generateAIProcessedAnswer(results, originalQuery);
+    
     return {
       summary: generateSummary(results, originalQuery),
+      aiAnswer: aiProcessedAnswer, // Новое поле с AI-обработанным ответом
       keyFacts,
       sources,
       topResults: topResults.map(r => ({
@@ -230,6 +234,111 @@ async function analyzeSearchResults(results, originalQuery) {
     return null;
   }
 }
+
+/**
+ * Генерирует AI-обработанный ответ на основе результатов поиска
+ */
+async function generateAIProcessedAnswer(results, originalQuery) {
+  try {
+    // Собираем содержимое из результатов поиска
+    const searchContent = results.slice(0, 8).map((result, index) => {
+      return `${index + 1}. **${result.title}**
+Источник: ${result.source}
+Содержание: ${result.snippet || result.content || ''}
+${result.content ? `Дополнительный контент: ${result.content.substring(0, 500)}...` : ''}
+
+---`;
+    }).join('\n');
+
+    // Создаем промпт для AI обработки
+    const aiPrompt = `Проанализируй следующие результаты поиска и дай четкий, исчерпывающий ответ на вопрос пользователя.
+
+ВОПРОС ПОЛЬЗОВАТЕЛЯ: "${originalQuery}"
+
+РЕЗУЛЬТАТЫ ПОИСКА:
+${searchContent}
+
+ИНСТРУКЦИИ:
+1. Дай четкий, прямой ответ на вопрос пользователя
+2. Используй только информацию из предоставленных результатов поиска
+3. Структурируй ответ логично с использованием заголовков и списков
+4. Указывай конкретные факты, цифры, даты
+5. В конце укажи основные источники информации
+6. НЕ предоставляй ссылки - только содержательную информацию
+7. Отвечай на русском языке
+
+ФОРМАТ ОТВЕТА:
+- Начни с прямого ответа на вопрос
+- Добавь детали и контекст
+- Укажи ключевые факты
+- Заключи кратким резюме`;
+
+    // Отправляем запрос к Python G4F провайдеру
+    const fetch = require('node-fetch');
+    const aiResponse = await fetch('http://localhost:5004/python/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message: aiPrompt,
+        provider: 'Qwen_Qwen_2_72B',
+        timeout: 30000
+      })
+    });
+    
+    const aiResult = await aiResponse.json();
+    
+    if (aiResult && aiResult.success && aiResult.response) {
+      return aiResult.response;
+    } else {
+      // Fallback к локальной обработке
+      return generateLocalProcessedAnswer(results, originalQuery);
+    }
+    
+  } catch (error) {
+    console.error('❌ Ошибка генерации AI ответа:', error);
+    return generateLocalProcessedAnswer(results, originalQuery);
+  }
+}
+
+/**
+ * Локальная обработка результатов поиска (fallback)
+ */
+function generateLocalProcessedAnswer(results, originalQuery) {
+  if (results.length === 0) {
+    return `По запросу "${originalQuery}" актуальная информация не найдена.`;
+  }
+
+  const topResult = results[0];
+  const allContent = results.slice(0, 5).map(r => r.snippet || r.content || '').join(' ');
+  
+  // Извлекаем ключевые данные
+  const numbers = allContent.match(/\d+[.,]?\d*/g) || [];
+  const dates = allContent.match(/\d{1,2}[./]\d{1,2}[./]\d{2,4}|\d{4}[-/]\d{1,2}[-/]\d{1,2}/g) || [];
+  
+  let answer = `**Ответ на запрос "${originalQuery}":**\n\n`;
+  answer += `${topResult.snippet || topResult.content || ''}\n\n`;
+  
+  if (numbers.length > 0) {
+    answer += `**Ключевые цифры:** ${numbers.slice(0, 5).join(', ')}\n\n`;
+  }
+  
+  if (dates.length > 0) {
+    answer += `**Важные даты:** ${dates.slice(0, 3).join(', ')}\n\n`;
+  }
+  
+  const sources = results.slice(0, 3).map(r => r.source).filter((v, i, a) => a.indexOf(v) === i);
+  answer += `**Источники информации:** ${sources.join(', ')}`;
+  
+  return answer;
+}
+
+module.exports = {
+  performAdvancedSearch,
+  performComprehensiveSearch,
+  searchRealTimeWeb,
+  analyzeSearchResults,
+  generateAIProcessedAnswer
+};
 
 /**
  * Извлечение ключевых фактов
