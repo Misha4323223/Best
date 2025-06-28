@@ -1,0 +1,31 @@
+{
+  "filename": "vectorized_1751027556272.svg",
+  "timestamp": 1751027556272,
+  "sourceUrl": "https://image.pollinations.ai/prompt/hyperrealistic%20professional%20t-shirt%20print%2C%20exactly%205%20colors%20maximum%2C%20photorealistic%20detailed%20illustration%2C%20no%20drop%20shadows%20no%20blur%20effects%2C%20solid%20black%20background%2C%20sharp%20clean%20contours%2C%20adult%20mature%20design%2C%20red%20orange%20white%20black%20gray%20color%20scheme%2C%20ultra-detailed%20creature%20features%2C%20realistic%20fur%20and%20scale%20textures%2C%20fierce%20expression%2C%20serious%20aesthetic%2C%20screen%20printing%20ready%2C%20commercial%20quality%2C%20Snugsocks%20-%20a%20set%20of%20high%2C%20cool%20socks%20with%20inscriptions%20and%20print%2C%20soda%20theme.%20Available%20at%20httpswww.wildberries.rucatalog.%20For%20a%20t-shirt%20vector%20design%2C%20consider%20using%20assertive%20graphical%20elements%20and%20bold%20colors%20to%20capture%20the%20vibrant%20nature%20of%20the%20product.?width=3072&height=3072&nologo=true&enhance=true&model=flux-pro&seed=1751027440746&quality=ultra",
+  "svgSize": 1339461,
+  "options": {
+    "ltres": 1,
+    "qtres": 1,
+    "pathomit": 8,
+    "colorsampling": 1,
+    "numberofcolors": 16,
+    "mincolorratio": 0.02,
+    "colorquantcycles": 3,
+    "scale": 1,
+    "simplifytolerance": 0,
+    "roundcoords": 1,
+    "corsenabled": false,
+    "rightangleenhance": true,
+    "layering": 0,
+    "strokewidth": 1,
+    "linefilter": false,
+    "viewbox": false,
+    "desc": false,
+    "lcpr": 0,
+    "qcpr": 0,
+    "blurradius": 0,
+    "blurdelta": 20
+  },
+  "vectorizer": "ImageTracerJS",
+  "version": "1.2.6"
+}

@@ -1,3 +1,7 @@
+import 'dotenv/config';
+
+console.log(process.env.DATABASE_URL);
+
 import express, { type Request, Response, NextFunction } from "express";
 // Этот импорт вызывает ошибку из-за неверного форматирования в deepspeek-provider.js
 // Отключаем прямой импорт проблемного файла
