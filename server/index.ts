@@ -27,9 +27,9 @@ const app = express();
 
 // Настройки для предотвращения дисконнектов
 app.use((req, res, next) => {
-  // Keep-alive headers для стабильности соединения
+  // Keep-alive headers для стабильности соединения  
   res.setHeader('Connection', 'keep-alive');
-  res.setHeader('Keep-Alive', 'timeout=120, max=1000');
+  res.setHeader('Keep-Alive', 'timeout=300, max=100');
   next();
 });
 
@@ -97,8 +97,8 @@ app.use((req, res, next) => {
   const PORT = process.env.PORT || 5000;
   
   // Настройки keep-alive для HTTP сервера
-  server.keepAliveTimeout = 120000; // 2 минуты
-  server.headersTimeout = 125000; // 2 минуты 5 секунд
+  server.keepAliveTimeout = 300000; // 5 минут
+  server.headersTimeout = 310000; // 5 минут 10 секунд
   
   server.listen({
     port: PORT,

@@ -69,7 +69,8 @@ export function setupWebSocket(httpServer: HttpServer, storage: IStorage) {
     
     // Handle WebSocket errors - минимальное логирование
     ws.on("error", (error) => {
-      console.error(`WebSocket error:`, error.message);
+      console.error(`WebSocket error for user ${ws.userId || 'unknown'}:`, error.message);
+      // Не закрываем соединение принудительно при ошибках
     });
   });
   
@@ -82,7 +83,7 @@ export function setupWebSocket(httpServer: HttpServer, storage: IStorage) {
         ws.terminate();
       }
     });
-  }, 300000); // 5 минут вместо постоянных ping/pong
+  }, 600000); // 10 минут вместо постоянных ping/pong
   
   // Clean up interval when server closes
   wss.on("close", () => {

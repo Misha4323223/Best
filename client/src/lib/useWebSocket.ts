@@ -22,8 +22,8 @@ export function useWebSocket({
   onMessage,
   onClose,
   onError,
-  reconnectInterval = 5000,
-  maxReconnectAttempts = 10
+  reconnectInterval = 10000,
+  maxReconnectAttempts = 5
 }: UseWebSocketOptions): UseWebSocketReturn {
   const [connectionStatus, setConnectionStatus] = useState<"connecting" | "connected" | "disconnected">("connecting");
   const socket = useRef<WebSocket | null>(null);
@@ -64,10 +64,12 @@ export function useWebSocket({
       // Try to reconnect if we haven't exceeded max attempts
       if (reconnectCount.current < maxReconnectAttempts) {
         reconnectCount.current += 1;
-        console.log(`Attempting reconnection ${reconnectCount.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
+        // Экспоненциальная задержка: каждая попытка в 2 раза дольше
+        const delay = reconnectInterval * Math.pow(2, reconnectCount.current - 1);
+        console.log(`Attempting reconnection ${reconnectCount.current}/${maxReconnectAttempts} in ${delay}ms`);
         reconnectTimeoutRef.current = setTimeout(() => {
           connect();
-        }, reconnectInterval);
+        }, delay);
       } else {
         console.log('Max reconnection attempts reached');
       }
@@ -100,9 +102,13 @@ export function useWebSocket({
   // Function to send messages through the WebSocket
   const sendWSMessage = useCallback((message: WSMessage) => {
     if (socket.current && socket.current.readyState === WebSocket.OPEN) {
-      socket.current.send(JSON.stringify(message));
+      try {
+        socket.current.send(JSON.stringify(message));
+      } catch (error) {
+        console.error("Failed to send WebSocket message:", error);
+      }
     } else {
-      console.error("WebSocket is not connected, cannot send message");
+      console.error(`WebSocket is not connected (state: ${socket.current?.readyState}), cannot send message`);
     }
   }, []);
   
