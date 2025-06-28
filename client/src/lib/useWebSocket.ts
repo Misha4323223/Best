@@ -22,8 +22,8 @@ export function useWebSocket({
   onMessage,
   onClose,
   onError,
-  reconnectInterval = 3000,
-  maxReconnectAttempts = 5
+  reconnectInterval = 5000,
+  maxReconnectAttempts = 10
 }: UseWebSocketOptions): UseWebSocketReturn {
   const [connectionStatus, setConnectionStatus] = useState<"connecting" | "connected" | "disconnected">("connecting");
   const socket = useRef<WebSocket | null>(null);
@@ -57,15 +57,19 @@ export function useWebSocket({
       if (onMessage) onMessage(event.data);
     };
     
-    ws.onclose = () => {
+    ws.onclose = (event) => {
+      console.log(`WebSocket closed: code=${event.code}, reason=${event.reason}, wasClean=${event.wasClean}`);
       setConnectionStatus("disconnected");
       
       // Try to reconnect if we haven't exceeded max attempts
       if (reconnectCount.current < maxReconnectAttempts) {
         reconnectCount.current += 1;
+        console.log(`Attempting reconnection ${reconnectCount.current}/${maxReconnectAttempts} in ${reconnectInterval}ms`);
         reconnectTimeoutRef.current = setTimeout(() => {
           connect();
         }, reconnectInterval);
+      } else {
+        console.log('Max reconnection attempts reached');
       }
       
       if (onClose) onClose();

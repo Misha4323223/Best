@@ -10,6 +10,10 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from 'cors';
 
+// Инициализируем мониторинг соединений
+const connectionMonitor = require('./connection-monitor');
+connectionMonitor.start();
+
 // Инициализируем векторизатор-менеджер (lazy loading)
 let vectorizerManager: any = null;
 try {
@@ -22,9 +26,18 @@ try {
 }
 
 const app = express();
+
+// Настройки для предотвращения дисконнектов
+app.use((req, res, next) => {
+  // Keep-alive headers для стабильности соединения
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Keep-Alive', 'timeout=120, max=1000');
+  next();
+});
+
 app.use(cors()); // Разрешаем CORS для всех маршрутов
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: '50mb' })); // Увеличиваем лимит для больших запросов
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Статическая раздача загруженных файлов
 app.use('/uploads', express.static('uploads'));
@@ -84,11 +97,26 @@ app.use((req, res, next) => {
   // Используем переменную окружения PORT если она доступна, иначе 5000
   // Это критично для правильной работы в окружении Replit
   const PORT = process.env.PORT || 5000;
+  
+  // Настройки keep-alive для HTTP сервера
+  server.keepAliveTimeout = 120000; // 2 минуты
+  server.headersTimeout = 125000; // 2 минуты 5 секунд
+  
   server.listen({
     port: PORT,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
     log(`serving on port ${PORT}`);
+  });
+  
+  // Обработка неожиданных отключений
+  server.on('clientError', (err, socket) => {
+    console.error('Client error:', err);
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+  });
+  
+  server.on('error', (err) => {
+    console.error('Server error:', err);
   });
 })();

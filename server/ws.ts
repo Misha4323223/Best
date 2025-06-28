@@ -3,6 +3,8 @@ import { WebSocketServer, WebSocket } from "ws";
 import { IStorage } from "./storage";
 import { WSEventType, WSMessage, WSMessagePayload, WSErrorPayload } from "@shared/schema";
 
+const connectionMonitor = require('./connection-monitor');
+
 interface ExtendedWebSocket extends WebSocket {
   userId?: number;
   isAlive?: boolean;
@@ -17,13 +19,21 @@ export function setupWebSocket(httpServer: HttpServer, storage: IStorage) {
   
   // Handle WebSocket connection
   wss.on("connection", (ws: ExtendedWebSocket) => {
-    console.log("WebSocket client connected");
+    const connectionId = `ws_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    console.log(`WebSocket client connected: ${connectionId}`);
+    
+    // Register connection in monitor
+    connectionMonitor.registerConnection(connectionId, 'websocket', {
+      userAgent: ws.protocol,
+      remoteAddress: ws.url
+    });
     
     // Set initial state
     ws.isAlive = true;
+    (ws as any).connectionId = connectionId;
     
     // Handle messages from client
-    ws.on("message", async (data: WebSocket.Data) => {
+    ws.on("message", async (data: any) => {
       try {
         // Parse message
         const message: WSMessage = JSON.parse(data.toString());
@@ -50,10 +60,14 @@ export function setupWebSocket(httpServer: HttpServer, storage: IStorage) {
     // Handle ping/pong for connection health check
     ws.on("pong", () => {
       ws.isAlive = true;
+      // Update connection activity in monitor
+      connectionMonitor.updateConnection((ws as any).connectionId);
     });
     
     // Handle client disconnect
     ws.on("close", async () => {
+      const connectionId = (ws as any).connectionId;
+      
       if (ws.userId) {
         // Remove from connected clients
         connectedClients.delete(ws.userId);
@@ -66,20 +80,36 @@ export function setupWebSocket(httpServer: HttpServer, storage: IStorage) {
         
         console.log(`User ${ws.userId} disconnected`);
       }
+      
+      // Remove from connection monitor
+      if (connectionId) {
+        connectionMonitor.removeConnection(connectionId);
+      }
+    });
+    
+    // Handle WebSocket errors
+    ws.on("error", (error) => {
+      const connectionId = (ws as any).connectionId;
+      console.error(`WebSocket error for ${connectionId}:`, error);
+      
+      if (connectionId) {
+        connectionMonitor.markError(connectionId, error.message);
+      }
     });
   });
   
-  // Set up interval to check for stale connections
+  // Set up interval to check for stale connections (увеличиваем до 60 сек)
   const interval = setInterval(() => {
     wss.clients.forEach((ws: ExtendedWebSocket) => {
       if (ws.isAlive === false) {
+        console.log('Terminating stale WebSocket connection');
         return ws.terminate();
       }
       
       ws.isAlive = false;
       ws.ping();
     });
-  }, 30000);
+  }, 60000); // Увеличили с 30 до 60 секунд
   
   // Clean up interval when server closes
   wss.on("close", () => {
@@ -194,7 +224,7 @@ async function handleMessage(
     // Send message to recipient if they're connected
     const recipientWs = connectedClients.get(receiverId);
     
-    if (recipientWs && recipientWs.readyState === WebSocket.OPEN) {
+    if (recipientWs && recipientWs.readyState === 1) { // WebSocket.OPEN = 1
       recipientWs.send(JSON.stringify({
         type: WSEventType.MESSAGE,
         payload: formattedMessage
@@ -227,7 +257,7 @@ function broadcastUserStatus(
 ) {
   // Broadcast to all connected clients except the user
   connectedClients.forEach((clientWs, clientId) => {
-    if (clientId !== userId && clientWs.readyState === WebSocket.OPEN) {
+    if (clientId !== userId && clientWs.readyState === 1) { // WebSocket.OPEN = 1
       clientWs.send(JSON.stringify({
         type: isOnline ? WSEventType.USER_CONNECTED : WSEventType.USER_DISCONNECTED,
         payload: { userId }
