@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг соединений - BOOOMERANGS</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .status-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .status-card.healthy { border-left: 4px solid #10b981; }
+        .status-card.warning { border-left: 4px solid #f59e0b; }
+        .status-card.error { border-left: 4px solid #ef4444; }
+        .status-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .status-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .connections-table {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .table-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-stale { background: #fef3c7; color: #92400e; }
+        .status-problematic { background: #fecaca; color: #991b1b; }
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .refresh-btn:hover {
+            background: #2563eb;
+        }
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 16px;
+        }
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .timestamp {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 10px;
+        }
+        .error-message {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Мониторинг соединений BOOOMERANGS</h1>
+            <p>Отслеживание состояния WebSocket и HTTP соединений для диагностики дисконнектов</p>
+        </div>
+
+        <div class="status-cards" id="statusCards">
+            <!-- Карточки статуса будут добавлены динамически -->
+        </div>
+
+        <div class="connections-table">
+            <div class="table-header">
+                <h2>Активные соединения</h2>
+                <div style="display: flex; align-items: center;">
+                    <button class="refresh-btn" onclick="loadConnectionData()">Обновить</button>
+                    <div class="auto-refresh">
+                        <input type="checkbox" id="autoRefresh" onchange="toggleAutoRefresh()">
+                        <label for="autoRefresh">Автообновление (30с)</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="loadingIndicator" class="loading" style="display: none;">
+                <p style="text-align: center; padding: 20px;">Загрузка данных...</p>
+            </div>
+
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+            <table id="connectionsTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Тип</th>
+                        <th>Статус</th>
+                        <th>Последняя активность</th>
+                        <th>Ошибки</th>
+                    </tr>
+                </thead>
+                <tbody id="connectionsBody">
+                </tbody>
+            </table>
+
+            <div id="noConnections" style="display: none; text-align: center; padding: 40px; color: #666;">
+                Нет активных соединений
+            </div>
+        </div>
+
+        <div class="timestamp" id="lastUpdate"></div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+
+        // Загрузка данных о соединениях
+        async function loadConnectionData() {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const errorMessage = document.getElementById('errorMessage');
+            const connectionsTable = document.getElementById('connectionsTable');
+            const noConnections = document.getElementById('noConnections');
+
+            loadingIndicator.style.display = 'block';
+            errorMessage.style.display = 'none';
+            connectionsTable.style.display = 'none';
+            noConnections.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/system/connections?detailed=true');
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error('Ошибка получения данных');
+                }
+
+                updateStatusCards(data.stats);
+                updateConnectionsTable(data.connections);
+                updateTimestamp(data.timestamp);
+
+                loadingIndicator.style.display = 'none';
+
+                if (data.connections && data.connections.length > 0) {
+                    connectionsTable.style.display = 'table';
+                } else {
+                    noConnections.style.display = 'block';
+                }
+
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+                loadingIndicator.style.display = 'none';
+                errorMessage.style.display = 'block';
+                errorMessage.textContent = `Ошибка: ${error.message}`;
+            }
+        }
+
+        // Обновление карточек статуса
+        function updateStatusCards(stats) {
+            const statusCards = document.getElementById('statusCards');
+            
+            statusCards.innerHTML = `
+                <div class="status-card healthy">
+                    <div class="status-number">${stats.active || 0}</div>
+                    <div class="status-label">Активных соединений</div>
+                </div>
+                <div class="status-card ${stats.stale > 0 ? 'warning' : 'healthy'}">
+                    <div class="status-number">${stats.stale || 0}</div>
+                    <div class="status-label">Устаревших соединений</div>
+                </div>
+                <div class="status-card ${stats.problematic > 0 ? 'error' : 'healthy'}">
+                    <div class="status-number">${stats.problematic || 0}</div>
+                    <div class="status-label">Проблемных соединений</div>
+                </div>
+                <div class="status-card healthy">
+                    <div class="status-number">${stats.total || 0}</div>
+                    <div class="status-label">Всего соединений</div>
+                </div>
+            `;
+        }
+
+        // Обновление таблицы соединений
+        function updateConnectionsTable(connections) {
+            const connectionsBody = document.getElementById('connectionsBody');
+            
+            if (!connections || connections.length === 0) {
+                connectionsBody.innerHTML = '';
+                return;
+            }
+
+            connectionsBody.innerHTML = connections.map(conn => `
+                <tr>
+                    <td>${conn.id}</td>
+                    <td>${conn.type}</td>
+                    <td><span class="status-badge status-${conn.status}">${conn.status}</span></td>
+                    <td>${new Date(conn.lastSeen).toLocaleString('ru-RU')}</td>
+                    <td>${conn.errorCount}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Обновление времени последнего обновления
+        function updateTimestamp(timestamp) {
+            const lastUpdate = document.getElementById('lastUpdate');
+            lastUpdate.textContent = `Последнее обновление: ${new Date(timestamp).toLocaleString('ru-RU')}`;
+        }
+
+        // Переключение автообновления
+        function toggleAutoRefresh() {
+            const autoRefresh = document.getElementById('autoRefresh');
+            
+            if (autoRefresh.checked) {
+                autoRefreshInterval = setInterval(loadConnectionData, 30000);
+                console.log('Автообновление включено (30 секунд)');
+            } else {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+                console.log('Автообновление отключено');
+            }
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            loadConnectionData();
+            
+            // Включаем автообновление по умолчанию
+            document.getElementById('autoRefresh').checked = true;
+            toggleAutoRefresh();
+        });
+
+        // Очистка при закрытии страницы
+        window.addEventListener('beforeunload', function() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+        });
+    </script>
+</body>
+</html>
