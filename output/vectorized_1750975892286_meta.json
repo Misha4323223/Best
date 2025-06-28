@@ -1,0 +1,31 @@
+{
+  "filename": "vectorized_1750975892286.svg",
+  "timestamp": 1750975892286,
+  "sourceUrl": "https://image.pollinations.ai/prompt/hyperrealistic%20professional%20t-shirt%20print%2C%20exactly%205%20colors%20maximum%2C%20photorealistic%20detailed%20illustration%2C%20no%20drop%20shadows%20no%20blur%20effects%2C%20solid%20black%20background%2C%20sharp%20clean%20contours%2C%20adult%20mature%20design%2C%20red%20white%20gray%20black%20silver%20color%20scheme%2C%20ultra-detailed%20samurai%20warrior%2C%20realistic%20armor%20textures%2C%20weapon%20details%2C%20fierce%20expression%2C%20serious%20aesthetic%2C%20screen%20printing%20ready%2C%20commercial%20quality%2C%20Create%20a%20print%20of%20a%20tech%20samurai.%20This%20is%20for%20a%20t-shirt%20vector%20design%2C%20employ%20striking%20graphic%20elements.?width=3072&height=3072&nologo=true&enhance=true&model=flux-pro&seed=1750975882923&quality=ultra",
+  "svgSize": 1443965,
+  "options": {
+    "ltres": 1,
+    "qtres": 1,
+    "pathomit": 8,
+    "colorsampling": 1,
+    "numberofcolors": 16,
+    "mincolorratio": 0.02,
+    "colorquantcycles": 3,
+    "scale": 1,
+    "simplifytolerance": 0,
+    "roundcoords": 1,
+    "corsenabled": false,
+    "rightangleenhance": true,
+    "layering": 0,
+    "strokewidth": 1,
+    "linefilter": false,
+    "viewbox": false,
+    "desc": false,
+    "lcpr": 0,
+    "qcpr": 0,
+    "blurradius": 0,
+    "blurdelta": 20
+  },
+  "vectorizer": "ImageTracerJS",
+  "version": "1.2.6"
+}
