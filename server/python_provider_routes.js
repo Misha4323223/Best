@@ -101,8 +101,8 @@ async function checkPythonProvider() {
         reject(err);
       });
       
-      // Установка таймаута в 5 секунд
-      req.setTimeout(5000, () => {
+      // Увеличиваем таймаут до 15 секунд для стабильности
+      req.setTimeout(15000, () => {
         req.destroy();
         reject(new Error('Таймаут соединения'));
       });
@@ -280,9 +280,9 @@ router.post('/chat/stream', async (req, res) => {
     
     console.log(`Запрос к Python G4F (стриминг): ${message.substring(0, 30)}${message.length > 30 ? '...' : ''}`);
     
-    // Настраиваем таймеры
-    const demoFallbackTimeout = 5000; // 5 секунд на демо-фоллбэк
-    const totalTimeout = timeout || 25000; // Общий таймаут
+    // Настраиваем таймеры (увеличиваем для стабильности)
+    const demoFallbackTimeout = 10000; // 10 секунд на демо-фоллбэк
+    const totalTimeout = timeout || 45000; // Увеличен общий таймаут до 45 сек
     
     let demoTimeoutId = null;
     let totalTimeoutId = null;

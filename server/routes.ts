@@ -299,6 +299,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const streamingRoutes = require('./streaming-routes');
   app.use('/api/streaming', streamingRoutes);
   
+  // API для мониторинга состояния соединений
+  const connectionMonitor = require('./connection-monitor');
+  app.get('/api/system/connections', (req, res) => {
+    const stats = connectionMonitor.getStats();
+    const detailed = req.query.detailed === 'true' ? connectionMonitor.getDetailedInfo() : null;
+    
+    res.json({
+      success: true,
+      timestamp: new Date().toISOString(),
+      stats,
+      connections: detailed
+    });
+  });
+  
+  // API для проверки состояния системы
+  app.get('/api/system/health', (req, res) => {
+    const stats = connectionMonitor.getStats();
+    const isHealthy = stats.problematic === 0 && stats.total > 0;
+    
+    res.json({
+      success: true,
+      healthy: isHealthy,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      connections: stats
+    });
+  });
+  
   // ImageTracerJS векторизатор работает независимо на порту 5006
   // Старые маршруты /api/vectorizer удалены для совместимости с новым векторизатором
   
