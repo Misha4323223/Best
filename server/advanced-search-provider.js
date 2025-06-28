@@ -1,7 +1,10 @@
 /**
  * Расширенный поисковый провайдер с множественными источниками
  * Поддерживает поиск в реальном времени, анализ веб-страниц и базы знаний
+ * Теперь с полноценным анализом ссылок, PDF и изображений
  */
+
+const WebContentAnalyzer = require('./web-content-analyzer');
 
 const webSearchProvider = require('./web-search-provider');
 
@@ -49,8 +52,22 @@ async function performAdvancedSearch(query, options = {}) {
 
     // Анализируем результаты если требуется
     let analysis = null;
+    let deepAnalysis = null;
+    
     if (includeAnalysis && searchResults.length > 0) {
+      // Глубокий анализ веб-страниц, PDF и изображений
+      const webAnalyzer = new WebContentAnalyzer();
+      deepAnalysis = await webAnalyzer.analyzeSearchResults(searchResults, query);
+      
+      // Стандартный AI анализ
       analysis = await analyzeSearchResults(searchResults, query);
+      
+      // Объединяем результаты
+      if (deepAnalysis && deepAnalysis.summary) {
+        analysis.deepContent = deepAnalysis.summary;
+        analysis.analyzedSources = deepAnalysis.sources;
+        analysis.keyFacts = deepAnalysis.keyFacts;
+      }
     }
 
     return {
