@@ -10,9 +10,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from 'cors';
 
-// Инициализируем мониторинг соединений
-const connectionMonitor = require('./connection-monitor');
-connectionMonitor.start();
+// Убираем избыточный мониторинг - он может вызывать дисконнекты
 
 // Инициализируем векторизатор-менеджер (lazy loading)
 let vectorizerManager: any = null;

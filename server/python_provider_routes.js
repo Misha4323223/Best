@@ -152,7 +152,7 @@ function getDemoResponse(message = '') {
 // Обработка стандартного API запроса
 router.post('/chat', async (req, res) => {
   try {
-    const { message, provider = 'FreeGpt', timeout = 20000, context, sessionId } = req.body;
+    const { message, provider = 'FreeGpt', timeout = 60000, context, sessionId } = req.body;
     
     if (!message) {
       return res.status(400).json({ 
@@ -250,7 +250,7 @@ router.post('/chat', async (req, res) => {
 // Потоковый API для вывода данных в режиме реального времени
 router.post('/chat/stream', async (req, res) => {
   try {
-    const { message, provider = 'FreeGpt', timeout = 20000 } = req.body;
+    const { message, provider = 'FreeGpt', timeout = 60000 } = req.body;
     
     if (!message) {
       return res.status(400).json({ 
@@ -280,9 +280,9 @@ router.post('/chat/stream', async (req, res) => {
     
     console.log(`Запрос к Python G4F (стриминг): ${message.substring(0, 30)}${message.length > 30 ? '...' : ''}`);
     
-    // Настраиваем таймеры (увеличиваем для стабильности)
-    const demoFallbackTimeout = 10000; // 10 секунд на демо-фоллбэк
-    const totalTimeout = timeout || 45000; // Увеличен общий таймаут до 45 сек
+    // Убираем агрессивные таймауты - они вызывают дисконнекты
+    const demoFallbackTimeout = 30000; // 30 секунд на демо-фоллбэк
+    const totalTimeout = timeout || 120000; // 2 минуты общий таймаут
     
     let demoTimeoutId = null;
     let totalTimeoutId = null;
